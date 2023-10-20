@@ -1,3 +1,1 @@
 # TEAMAPP
-
-# Coming soon....
