@@ -1,10 +1,9 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
-from config.config import Config
-from config.config_loader import Mode, load_config
+from config.config import Mode, config
 
-config: Config = load_config(Mode.DEV)
+config = config.load(Mode.DEV)
 
 app = FastAPI(title="TEAMAPP", version="0.0.1")
 

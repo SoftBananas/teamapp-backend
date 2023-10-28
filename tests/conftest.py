@@ -8,9 +8,8 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import NullPool
 
+from src import Mode, load_config, metadata
 from src.config.database import get_async_session
-from src import metadata
-from src.config.config_loader import Mode, load_config
 from src.main import app
 
 db = load_config(Mode.TEST).database

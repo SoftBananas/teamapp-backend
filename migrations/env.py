@@ -1,18 +1,20 @@
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
-
 from alembic import context
-from config.config_loader import load_config
-from src import metadata
+from sqlalchemy import engine_from_config, pool
+
+from src.config.config import config
+
+db = config.load().database
+
+from src.config.database import metadata
+from src.models import *
 
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
 
-db = load_config().database
 section = config.config_ini_section
 config.set_section_option(section, "DB_DRIVER", db.driver)
 config.set_section_option(section, "DB_HOST", db.host)

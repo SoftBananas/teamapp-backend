@@ -5,11 +5,9 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.pool import NullPool
 
-from config.config import Config
+from src.config.config import config
 
-db = Config().database
-
-DATABASE_URL = f"{db.driver}://{db.user}:{db.password}@{db.host}:{db.port}/{db.name}"
+DATABASE_URL = config.database.get_url()
 
 metadata = MetaData()
 Base = declarative_base(metadata=metadata)

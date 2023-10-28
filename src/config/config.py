@@ -1,8 +1,11 @@
 import os
+from enum import Enum
 
 from dotenv import load_dotenv
+from yaml import safe_load
 
-from config.utils import MetaSingleton
+from src.config.utils.singleton import MetaSingleton
+from typing import Self
 
 
 class DataBase:
@@ -14,12 +17,27 @@ class DataBase:
         self.user = os.environ.get("DB_USER")
         self.password = os.environ.get("DB_PASSWORD")
 
+    def get_url(self):
+        return f"{self.driver}://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}"
+
+
+class Mode(Enum):
+    DEV = "configs/dev.yml"
+    TEST = "configs/test.yml"
+    PROD = "configs/prod.yml"
+
 
 class Config(metaclass=MetaSingleton):
+    configs: dict
     database: DataBase
-    origins = list[str]
+    origins: list[str]
 
-    def __init__(self, configs: dict = None):
+    def load(self, mode: Mode = Mode.PROD) -> Self:
+        with open(f"{mode.value}", "r") as config_file:
+            configs = safe_load(config_file)
+        return self.set_configs(configs)
+
+    def set_configs(self, configs: dict) -> Self:
         if configs is None:
             raise ValueError("YAML file not given")
         self.configs = configs
@@ -27,3 +45,8 @@ class Config(metaclass=MetaSingleton):
 
         self.database = DataBase()
         self.origins = self.configs["origins"]
+
+        return self
+
+
+config = Config()
