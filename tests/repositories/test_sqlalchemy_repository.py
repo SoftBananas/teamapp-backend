@@ -1,9 +1,7 @@
 from unittest import TestCase
 
 
-class TestLRUCache(TestCase):
-    """
-    Tests for U
-    """
+class TestSQLAlchemyRepository(TestCase):
 
-    def test_cache_dict(self):
+    def test_add(self):
+        pass
