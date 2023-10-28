@@ -1,4 +1,4 @@
-from sqlalchemy import Column, VARCHAR, Integer
+from sqlalchemy import VARCHAR, Column, Integer
 
 from config.database import Base, metadata
 
