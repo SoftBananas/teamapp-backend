@@ -1,18 +1,21 @@
-from datetime import datetime
-
-from sqlalchemy import Column, String, Integer, UUID, Boolean, ForeignKey, JSON, DATETIME, DATE, Float, Text
+from sqlalchemy import (
+    DATE,
+    UUID,
+    Column,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+)
 
 from src.config.database import Base
-
-import uuid
-
 from src.models.user import User
 
-# SUBSCRIPTION MODULE
 
 # TODO: обсудить
 class SubscriptionType(Base):
     __tablename__ = "subscription_type"
+    __table_args__ = {"schema": "subscription"}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False)
@@ -22,8 +25,10 @@ class SubscriptionType(Base):
     currency_id = Column(Integer, nullable=False)
     slug = Column(String, nullable=False)
 
+
 class Subscription(Base):
     __tablename__ = "subscription"
+    __table_args__ = {"schema": "subscription"}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     user_uuid = Column(UUID, ForeignKey(User.uuid), nullable=False)
@@ -37,17 +42,16 @@ class Subscription(Base):
 
 class Currency(Base):
     __tablename__ = "currency"
+    __table_args__ = {"schema": "subscription"}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False)
     slug = Column(String, nullable=False)
 
 
-
-
-
 class Sale(Base):
     __tablename__ = "sale"
+    __table_args__ = {"schema": "subscription"}
 
     id = Column(Integer, primary_key=True)
     code = Column(String, nullable=False)  # разве нот нал

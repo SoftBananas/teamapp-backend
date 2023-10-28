@@ -1,8 +1,6 @@
-from sqlalchemy import Column, String, Integer, UUID, ForeignKey
-
+from sqlalchemy import UUID, Column, ForeignKey, Integer, String
 
 from src.config.database import Base
-
 from src.models.chat import Message
 from src.models.team import Team
 from src.models.user import CV
@@ -11,6 +9,7 @@ from src.models.user import CV
 # RESPONSE MODULE
 class ADResponse(Base):
     __tablename__ = "ad_response"
+    __table_args__ = {"schema": "response"}
 
     id = Column(Integer, primary_key=True)
     user_uuid = Column(UUID, nullable=False)
@@ -21,6 +20,7 @@ class ADResponse(Base):
 # message module
 class MessageResponse(Base):
     __tablename__ = "message_response"
+    __table_args__ = {"schema": "response"}
 
     message_id = Column(Integer, ForeignKey(Message.id), primary_key=True)
     response_id = Column(Integer, ForeignKey(ADResponse.id), primary_key=True)
@@ -28,6 +28,7 @@ class MessageResponse(Base):
 
 class ResponseStatus(Base):
     __tablename__ = "response_status"
+    __table_args__ = {"schema": "response"}
 
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
@@ -36,10 +37,9 @@ class ResponseStatus(Base):
 
 class CVResponse(Base):
     __tablename__ = "cv_response"
+    __table_args__ = {"schema": "response"}
 
     id = Column(Integer, primary_key=True)
     team_uuid = Column(UUID, ForeignKey(Team.uuid), nullable=False)
     cv_id = Column(Integer, ForeignKey(CV.id), nullable=False)
     status_id = Column(Integer, ForeignKey(ResponseStatus.id), nullable=False)
-
-

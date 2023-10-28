@@ -1,11 +1,11 @@
 import os
 from enum import Enum
+from typing import Self
 
 from dotenv import load_dotenv
 from yaml import safe_load
 
 from src.config.utils.singleton import MetaSingleton
-from typing import Self
 
 
 class DataBase:
