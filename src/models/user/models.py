@@ -1,6 +1,6 @@
 from sqlalchemy import Column, VARCHAR, Integer
 
-from src.database import Base, metadata
+from config.database import Base, metadata
 
 
 class Role(Base):

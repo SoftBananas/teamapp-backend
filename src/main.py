@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
-from config import ORIGINS
+from config.config import ORIGINS
 
 app = FastAPI(title="TEAMAPP", version="0.0.1")
 
