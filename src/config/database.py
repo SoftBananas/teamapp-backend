@@ -10,8 +10,9 @@ from config.config import Config
 db = Config().database
 
 DATABASE_URL = f"{db.driver}://{db.user}:{db.password}@{db.host}:{db.port}/{db.name}"
-Base = declarative_base()
+
 metadata = MetaData()
+Base = declarative_base(metadata=metadata)
 
 engine = create_async_engine(url=DATABASE_URL, poolclass=NullPool)
 async_session_maker = sessionmaker(
