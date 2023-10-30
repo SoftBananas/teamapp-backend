@@ -1,5 +1,4 @@
 import os
-from typing import Any
 
 from sqlalchemy import MetaData
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
@@ -10,7 +9,6 @@ from sqlalchemy.pool import NullPool
 class DataBase:
     metadata: MetaData
     engine: AsyncEngine
-    Base: Any
 
     def __init__(self):
         self._set_connection()
