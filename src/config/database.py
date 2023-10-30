@@ -1,10 +1,9 @@
 import os
-from typing import Any, AsyncGenerator
+from typing import Any
 
 from sqlalchemy import MetaData
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import DeclarativeBase, sessionmaker
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import NullPool
 
 
@@ -17,7 +16,6 @@ class DataBase:
         self._set_connection()
         self._set_metadata()
         self._set_session_maker()
-        self._set_base()
 
     def get_url(self) -> str:
         return f"{self.driver}://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}"
@@ -39,7 +37,3 @@ class DataBase:
         self.session_maker = sessionmaker(
             self.engine, class_=AsyncSession, expire_on_commit=False
         )
-
-    def _set_base(self) -> None:
-        self.Base = DeclarativeBase
-        self.Base.metadata = self.metadata
