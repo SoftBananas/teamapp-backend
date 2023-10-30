@@ -2,8 +2,8 @@ import uuid
 from datetime import datetime
 
 from sqlalchemy import (
-    TIMESTAMP,
     JSON,
+    TIMESTAMP,
     UUID,
     Boolean,
     Column,
@@ -12,7 +12,7 @@ from sqlalchemy import (
     String,
 )
 
-from src.config.database import Base
+from src.database import Base
 
 
 class Role(Base):
@@ -28,7 +28,7 @@ class User(Base):
     __tablename__ = "user"
     __table_args__ = {"schema": "user"}
 
-    uuid = Column(UUID, primary_key=True, unique=True, default=uuid.uuid4)
+    id = Column(UUID, primary_key=True, unique=True, default=uuid.uuid4)
     name = Column(String, nullable=False)
     lastname = Column(String, nullable=False)
     username = Column(String, nullable=False, unique=True)
@@ -42,9 +42,9 @@ class User(Base):
     birthday = Column(TIMESTAMP, nullable=True)
 
     created_at = Column(TIMESTAMP, nullable=False, default=datetime.now())
-    updated_at = Column(TIMESTAMP, nullable=False)
+    updated_at = Column(TIMESTAMP, nullable=False, default=datetime.now())
     deleted_at = Column(TIMESTAMP, nullable=True)
-    is_blocked = Column(Boolean, nullable=False)
+    is_blocked = Column(Boolean, nullable=False, default=False)
 
 
 class CV(Base):
@@ -52,7 +52,7 @@ class CV(Base):
     __table_args__ = {"schema": "user"}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    user_uuid = Column(UUID, ForeignKey(User.uuid), nullable=False)
+    user_uuid = Column(UUID, ForeignKey(User.id), nullable=False)
     description = Column(String, nullable=True)
 
 
@@ -110,7 +110,7 @@ class Notification(Base):
     __table_args__ = {"schema": "user"}
 
     id = Column(Integer, primary_key=True)
-    user_uuid = Column(UUID, ForeignKey(User.uuid), nullable=False)
+    user_uuid = Column(UUID, ForeignKey(User.id), nullable=False)
     image = Column(Integer, nullable=True)
     created_at = Column(TIMESTAMP, nullable=False)
     title = Column(String, nullable=False)

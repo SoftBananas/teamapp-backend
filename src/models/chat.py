@@ -2,7 +2,7 @@ from datetime import datetime
 
 from sqlalchemy import TIMESTAMP, UUID, Column, ForeignKey, Integer, String, Text
 
-from src.config.database import Base
+from src.database import Base
 
 
 class Chat(Base):

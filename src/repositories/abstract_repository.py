@@ -3,11 +3,11 @@ from abc import ABC, abstractmethod
 
 class AbstractRepository(ABC):
     @abstractmethod
-    async def add(self):
+    async def add(self, model):
         raise NotImplementedError
 
     @abstractmethod
-    async def find(self):
+    async def find_by_id(self, model_id):
         raise NotImplementedError
 
     @abstractmethod
@@ -15,9 +15,9 @@ class AbstractRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def edit(self):
+    async def edit(self, model):
         raise NotImplementedError
 
     @abstractmethod
-    async def delete(self):
+    async def remove(self, model_id):
         raise NotImplementedError

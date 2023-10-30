@@ -2,8 +2,8 @@ import uuid
 from datetime import datetime
 
 from sqlalchemy import (
-    TIMESTAMP,
     JSON,
+    TIMESTAMP,
     UUID,
     Boolean,
     Column,
@@ -13,7 +13,7 @@ from sqlalchemy import (
     Text,
 )
 
-from src.config.database import Base
+from src.database import Base
 from src.models.skill import Skill
 from src.models.user import User
 
@@ -23,8 +23,8 @@ class Team(Base):
     __tablename__ = "team"
     __table_args__ = {"schema": "team"}
 
-    uuid = Column(UUID, primary_key=True, unique=True, default=uuid.uuid4)
-    owner_id = Column(UUID, ForeignKey(User.uuid), nullable=False)
+    id = Column(UUID, primary_key=True, unique=True, default=uuid.uuid4)
+    owner_id = Column(UUID, ForeignKey(User.id), nullable=False)
     name = Column(String, nullable=False)
     image = Column(String, nullable=True)
     description = Column(Text, nullable=True)
@@ -39,8 +39,8 @@ class UserTeam(Base):
     __tablename__ = "user_team"
     __table_args__ = {"schema": "team"}
 
-    user_uuid = Column(UUID, ForeignKey(User.uuid), primary_key=True)
-    team_uuid = Column(UUID, ForeignKey(Team.uuid), primary_key=True)
+    user_uuid = Column(UUID, ForeignKey(User.id), primary_key=True)
+    team_uuid = Column(UUID, ForeignKey(Team.id), primary_key=True)
     speciality = Column(String, nullable=True)
 
 
@@ -49,7 +49,7 @@ class TeamRole(Base):
     __table_args__ = {"schema": "team"}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    team_uuid = Column(UUID, ForeignKey(Team.uuid), nullable=False)
+    team_uuid = Column(UUID, ForeignKey(Team.id), nullable=False)
     name = Column(String, nullable=False)
 
 
@@ -76,7 +76,7 @@ class TeamExperience(Base):
     __table_args__ = {"schema": "team"}
 
     id = Column(Integer, primary_key=True)
-    team_uuid = Column(UUID, ForeignKey(Team.uuid), nullable=False)
+    team_uuid = Column(UUID, ForeignKey(Team.id), nullable=False)
     date_from = Column(TIMESTAMP, nullable=True)
     date_to = Column(TIMESTAMP, nullable=False)
     name = Column(String, nullable=False)
@@ -88,7 +88,7 @@ class AD(Base):
     __table_args__ = {"schema": "team"}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    team_uuid = Column(UUID, ForeignKey(Team.uuid), nullable=False)
+    team_uuid = Column(UUID, ForeignKey(Team.id), nullable=False)
     speciality = Column(String, nullable=True)
     name = Column(String, nullable=False)
     description = Column(Text, nullable=True)

@@ -1,14 +1,6 @@
-from sqlalchemy import (
-    DATE,
-    UUID,
-    Column,
-    Float,
-    ForeignKey,
-    Integer,
-    String,
-)
+from sqlalchemy import DATE, UUID, Column, Float, ForeignKey, Integer, String
 
-from src.config.database import Base
+from src.database import Base
 from src.models.user import User
 
 
@@ -31,7 +23,7 @@ class Subscription(Base):
     __table_args__ = {"schema": "subscription"}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    user_uuid = Column(UUID, ForeignKey(User.uuid), nullable=False)
+    user_uuid = Column(UUID, ForeignKey(User.id), nullable=False)
     subscription_id = Column(Integer, ForeignKey(SubscriptionType.id), nullable=False)
     date_start = Column(DATE, nullable=True)
     date_end = Column(DATE, nullable=False)

@@ -1,8 +1,8 @@
-"""all models splited by schemas
+"""all tables
 
-Revision ID: 990bbcc25e31
+Revision ID: 2f07c493b01b
 Revises: 
-Create Date: 2023-10-29 00:02:59.344839
+Create Date: 2023-10-30 15:55:01.797057
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '990bbcc25e31'
+revision: str = '2f07c493b01b'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -129,7 +129,7 @@ def upgrade() -> None:
     schema='subscription'
     )
     op.create_table('user',
-    sa.Column('uuid', sa.UUID(), nullable=False),
+    sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('lastname', sa.String(), nullable=False),
     sa.Column('username', sa.String(), nullable=False),
@@ -146,10 +146,10 @@ def upgrade() -> None:
     sa.Column('deleted_at', sa.TIMESTAMP(), nullable=True),
     sa.Column('is_blocked', sa.Boolean(), nullable=False),
     sa.ForeignKeyConstraint(['role_id'], ['user.role.id'], ),
-    sa.PrimaryKeyConstraint('uuid'),
+    sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
+    sa.UniqueConstraint('id'),
     sa.UniqueConstraint('username'),
-    sa.UniqueConstraint('uuid'),
     schema='user'
     )
     op.create_table('message',
@@ -166,11 +166,11 @@ def upgrade() -> None:
     schema='chat'
     )
     op.create_table('settings',
-    sa.Column('user_uuid', sa.UUID(), nullable=False),
+    sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('is_notifying', sa.Boolean(), nullable=False),
     sa.Column('is_mailing', sa.Boolean(), nullable=False),
-    sa.ForeignKeyConstraint(['user_uuid'], ['user.user.uuid'], ),
-    sa.PrimaryKeyConstraint('user_uuid'),
+    sa.ForeignKeyConstraint(['id'], ['user.user.id'], ),
+    sa.PrimaryKeyConstraint('id'),
     schema='settings'
     )
     op.create_table('subscription',
@@ -182,12 +182,12 @@ def upgrade() -> None:
     sa.Column('payment', sa.Float(), nullable=False),
     sa.Column('currency_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['subscription_id'], ['subscription.subscription_type.id'], ),
-    sa.ForeignKeyConstraint(['user_uuid'], ['user.user.uuid'], ),
+    sa.ForeignKeyConstraint(['user_uuid'], ['user.user.id'], ),
     sa.PrimaryKeyConstraint('id'),
     schema='subscription'
     )
     op.create_table('team',
-    sa.Column('uuid', sa.UUID(), nullable=False),
+    sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('owner_id', sa.UUID(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('image', sa.String(), nullable=True),
@@ -197,16 +197,16 @@ def upgrade() -> None:
     sa.Column('created_at', sa.TIMESTAMP(), nullable=False),
     sa.Column('updated_at', sa.TIMESTAMP(), nullable=False),
     sa.Column('deleted_at', sa.TIMESTAMP(), nullable=True),
-    sa.ForeignKeyConstraint(['owner_id'], ['user.user.uuid'], ),
-    sa.PrimaryKeyConstraint('uuid'),
-    sa.UniqueConstraint('uuid'),
+    sa.ForeignKeyConstraint(['owner_id'], ['user.user.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('id'),
     schema='team'
     )
     op.create_table('cv',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('user_uuid', sa.UUID(), nullable=False),
     sa.Column('description', sa.String(), nullable=True),
-    sa.ForeignKeyConstraint(['user_uuid'], ['user.user.uuid'], ),
+    sa.ForeignKeyConstraint(['user_uuid'], ['user.user.id'], ),
     sa.PrimaryKeyConstraint('id'),
     schema='user'
     )
@@ -217,7 +217,7 @@ def upgrade() -> None:
     sa.Column('created_at', sa.TIMESTAMP(), nullable=False),
     sa.Column('title', sa.String(), nullable=False),
     sa.Column('description', sa.String(), nullable=True),
-    sa.ForeignKeyConstraint(['user_uuid'], ['user.user.uuid'], ),
+    sa.ForeignKeyConstraint(['user_uuid'], ['user.user.id'], ),
     sa.PrimaryKeyConstraint('id'),
     schema='user'
     )
@@ -244,7 +244,7 @@ def upgrade() -> None:
     sa.Column('status_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['cv_id'], ['user.cv.id'], ),
     sa.ForeignKeyConstraint(['status_id'], ['response.response_status.id'], ),
-    sa.ForeignKeyConstraint(['team_uuid'], ['team.team.uuid'], ),
+    sa.ForeignKeyConstraint(['team_uuid'], ['team.team.id'], ),
     sa.PrimaryKeyConstraint('id'),
     schema='response'
     )
@@ -275,7 +275,7 @@ def upgrade() -> None:
     sa.Column('created_at', sa.TIMESTAMP(), nullable=False),
     sa.Column('updated_at', sa.TIMESTAMP(), nullable=False),
     sa.Column('deleted_at', sa.TIMESTAMP(), nullable=True),
-    sa.ForeignKeyConstraint(['team_uuid'], ['team.team.uuid'], ),
+    sa.ForeignKeyConstraint(['team_uuid'], ['team.team.id'], ),
     sa.PrimaryKeyConstraint('id'),
     schema='team'
     )
@@ -286,7 +286,7 @@ def upgrade() -> None:
     sa.Column('date_to', sa.TIMESTAMP(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('description', sa.String(), nullable=True),
-    sa.ForeignKeyConstraint(['team_uuid'], ['team.team.uuid'], ),
+    sa.ForeignKeyConstraint(['team_uuid'], ['team.team.id'], ),
     sa.PrimaryKeyConstraint('id'),
     schema='team'
     )
@@ -294,7 +294,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('team_uuid', sa.UUID(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
-    sa.ForeignKeyConstraint(['team_uuid'], ['team.team.uuid'], ),
+    sa.ForeignKeyConstraint(['team_uuid'], ['team.team.id'], ),
     sa.PrimaryKeyConstraint('id'),
     schema='team'
     )
@@ -302,8 +302,8 @@ def upgrade() -> None:
     sa.Column('user_uuid', sa.UUID(), nullable=False),
     sa.Column('team_uuid', sa.UUID(), nullable=False),
     sa.Column('speciality', sa.String(), nullable=True),
-    sa.ForeignKeyConstraint(['team_uuid'], ['team.team.uuid'], ),
-    sa.ForeignKeyConstraint(['user_uuid'], ['user.user.uuid'], ),
+    sa.ForeignKeyConstraint(['team_uuid'], ['team.team.id'], ),
+    sa.ForeignKeyConstraint(['user_uuid'], ['user.user.id'], ),
     sa.PrimaryKeyConstraint('user_uuid', 'team_uuid'),
     schema='team'
     )

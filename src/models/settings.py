@@ -1,6 +1,6 @@
 from sqlalchemy import UUID, Boolean, Column, ForeignKey, Integer, String
 
-from src.config.database import Base
+from src.database import Base
 from src.models.user import User
 
 
@@ -8,7 +8,7 @@ class Settings(Base):
     __tablename__ = "settings"
     __table_args__ = {"schema": "settings"}
 
-    user_uuid = Column(UUID, ForeignKey(User.uuid), primary_key=True)
+    id = Column(UUID, ForeignKey(User.id), primary_key=True)
     is_notifying = Column(Boolean, nullable=False, default=True)
     is_mailing = Column(Boolean, nullable=False, default=True)
 

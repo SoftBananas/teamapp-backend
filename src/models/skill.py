@@ -1,6 +1,6 @@
 from sqlalchemy import Column, ForeignKey, Integer, String
 
-from src.config.database import Base
+from src.database import Base
 from src.models.user import CV
 
 

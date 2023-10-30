@@ -1,6 +1,6 @@
 from sqlalchemy import UUID, Column, ForeignKey, Integer, String
 
-from src.config.database import Base
+from src.database import Base
 from src.models.chat import Message
 from src.models.team import Team
 from src.models.user import CV
@@ -40,6 +40,6 @@ class CVResponse(Base):
     __table_args__ = {"schema": "response"}
 
     id = Column(Integer, primary_key=True)
-    team_uuid = Column(UUID, ForeignKey(Team.uuid), nullable=False)
+    team_uuid = Column(UUID, ForeignKey(Team.id), nullable=False)
     cv_id = Column(Integer, ForeignKey(CV.id), nullable=False)
     status_id = Column(Integer, ForeignKey(ResponseStatus.id), nullable=False)
