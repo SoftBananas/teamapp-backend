@@ -1,4 +1,4 @@
-env_file: .env-test
+env_file: .env.test
 
 origins:
   - "*"

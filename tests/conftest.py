@@ -5,8 +5,8 @@ from typing import AsyncGenerator
 import pytest
 from fastapi.testclient import TestClient
 from httpx import AsyncClient
-from src.config.config import Mode, config
-from src.config.database import DataBase
+from src.core.config import Mode, config
+from src.core.database import DataBase
 from src.main import app
 
 db: DataBase = config.load(Mode.TEST).database

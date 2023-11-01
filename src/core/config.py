@@ -4,7 +4,7 @@ from typing import Self
 from dotenv import load_dotenv
 from yaml import safe_load
 
-from src.config.database import DataBase
+from src.core.database import DataBase
 
 
 class Mode(Enum):

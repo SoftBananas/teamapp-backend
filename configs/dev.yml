@@ -1,4 +1,4 @@
-env_file: .env-dev
+env_file: .env.dev
 
 origins:
   - "*"

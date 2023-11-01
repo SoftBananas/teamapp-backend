@@ -1,10 +1,10 @@
 from typing import AsyncGenerator
 
-from sqlalchemy import inspect
+from sqlalchemy import inspect, Column, Integer
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import DeclarativeBase
 
-from src.config.config import config
+from src.core.config import config
 
 if not config.is_loaded:
     raise Exception("Config was not loaded")

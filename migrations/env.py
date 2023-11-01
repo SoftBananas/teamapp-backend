@@ -4,7 +4,7 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
-from src.config.config import config
+from src.core.config import config
 
 db = config.load().database
 
@@ -23,7 +23,7 @@ alembic_config.set_section_option(section, "DB_NAME", db.name)
 alembic_config.set_section_option(section, "DB_PASSWORD", db.password)
 alembic_config.set_section_option(section, "DB_USER", db.user)
 
-# Interpret the config file for Python logging.
+# Interpret the core file for Python logging.
 # This line sets up loggers basically.
 if alembic_config.config_file_name is not None:
     fileConfig(alembic_config.config_file_name)
@@ -34,9 +34,9 @@ if alembic_config.config_file_name is not None:
 # target_metadata = mymodel.Base.metadata
 target_metadata = config.database.metadata
 
-# other values from the config, defined by the needs of env.py,
+# other values from the core, defined by the needs of env.py,
 # can be acquired:
-# my_important_option = config.get_main_option("my_important_option")
+# my_important_option = core.get_main_option("my_important_option")
 # ... etc.
 
 

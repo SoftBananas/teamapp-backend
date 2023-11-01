@@ -1,4 +1,4 @@
-env_file: .env-prod
+env_file: .env.prod
 
 origins:
   - "*"

@@ -160,6 +160,6 @@ cython_debug/
 #.idea/
 
 .idea/
-.env-dev
-.env-test
-.env-prod
+.env.dev
+.env.test
+.env.prod

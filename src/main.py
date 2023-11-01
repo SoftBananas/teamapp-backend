@@ -1,8 +1,9 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
-from config.config import Mode, config
+from core.config import Mode, config
 
+# TODO: ArgParser for Mode
 config = config.load(Mode.DEV)
 
 app = FastAPI(title="TEAMAPP", version="0.0.1")

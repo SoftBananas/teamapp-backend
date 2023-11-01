@@ -1,28 +1,18 @@
 import uuid
 
 import pytest
-from repositories.user_repositories import UserRepository
-from schemas.user.user_schemas import UserRead
+from src.repositories.user_repositories import UserRepository
+from tests.unit_tests.repositories.utils import get_existing_models
 from sqlalchemy import select
 from src.models import User
 from tests.conftest import db
 
-from unit_tests.repositories.user.utils import add_role, remove_roles, remove_users
-
-
-@pytest.fixture(autouse=True, scope="module")
-async def setup_database(roles):
-    for role in roles:
-        await add_role(role)
-    yield
-    await remove_users()
-    await remove_roles()
-
 
 @pytest.mark.usefixtures("setup_database")
 class TestUserRepository:
-    async def test_add(self, users):
-        for iteration, user in enumerate(users):
+
+    async def test_add(self, user_models):
+        for iteration, user in enumerate(user_models):
             async with db.session_maker() as session:
                 repository = UserRepository(session=session)
                 await repository.add(user)
@@ -36,10 +26,11 @@ class TestUserRepository:
     async def test_find_by_id(self):
         async with db.session_maker() as session:
             repository = UserRepository(session=session)
-
-            for user_uuid in await self.__get_existing_uuids():
+            existing_users = await get_existing_models(User)
+            existing_uuids = [existing_user.id for existing_user in existing_users]
+            for user_uuid in existing_uuids:
                 found_user = await repository.find_by_id(user_uuid)
-                assert isinstance(found_user, UserRead)
+                assert isinstance(found_user, User)
                 assert found_user.id == user_uuid
 
             not_existing_uuid = uuid.UUID(int=123)
@@ -52,47 +43,46 @@ class TestUserRepository:
             found_user = await repository.find_all()
             assert isinstance(found_user, list)
             for user in found_user:
-                assert isinstance(user, UserRead)
+                assert isinstance(user, User)
 
     async def test_edit(self):
-        uuids = await self.__get_existing_uuids()
+        existing_users = await get_existing_models(User)
+        existing_uuids = [existing_user.id for existing_user in existing_users]
         async with db.session_maker() as session:
             repository = UserRepository(session=session)
 
-            user = await repository.find_by_id(uuids[1])
-            assert user.role_id == 3
-            user.role_id = 2
-            await repository.edit(user)
-            user = await repository.find_by_id(uuids[1])
-            assert user.role_id == 2
+            existing_user = await repository.find_by_id(existing_uuids[1])
+            assert existing_user.role_id == 3
 
-            user = await repository.find_by_id(uuids[0])
-            assert user.role_id == 1
+            existing_user.role_id = 2
+            await repository.edit(existing_user)
+
+            edited_user = await repository.find_by_id(existing_uuids[1])
+            assert edited_user.role_id == 2
+            not_edited_user = await repository.find_by_id(existing_uuids[0])
+            assert not_edited_user.role_id == 1
 
     async def test_remove(self):
-        uuids = await self.__get_existing_uuids()
+        existing_users = await get_existing_models(User)
+        existing_uuids = [existing_user.id for existing_user in existing_users]
         async with db.session_maker() as session:
             repository = UserRepository(session=session)
-            await repository.remove(uuids[1])
-            user = await repository.find_by_id(uuids[1])
-            assert user is None
-            user = await repository.find_by_id(uuids[0])
-            assert user is not None
+            await repository.remove(existing_uuids[1])
 
-    async def test_remove_all(self, users):
+            removed_user = await repository.find_by_id(existing_uuids[1])
+            assert removed_user is None
+            not_removed_user = await repository.find_by_id(existing_uuids[0])
+            assert not_removed_user is not None
+
+    async def test_remove_all(self, user_models):
         async with db.session_maker() as session:
             repository = UserRepository(session=session)
-            await repository.add(users[1])
-            uuids = await self.__get_existing_uuids()
+            await repository.add(user_models[1])
+            existing_users = await get_existing_models(User)
+            existing_uuids = [existing_user.id for existing_user in existing_users]
+
             await repository.remove_all()
-            user = await repository.find_by_id(uuids[1])
-            assert user is None
-            user = await repository.find_by_id(uuids[0])
-            assert user is None
 
-    @staticmethod
-    async def __get_existing_uuids() -> list[uuid.UUID]:
-        async with db.session_maker() as session:
-            result = await session.execute(select(User))
-            uuids = [user[0].id for user in result.all()]
-        return uuids
+            for removed_index in range(len(existing_users)):
+                user = await repository.find_by_id(existing_uuids[removed_index])
+                assert user is None
