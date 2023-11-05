@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
-from core.config import Mode, config
+from config.config import Mode, config
 
 # TODO: ArgParser for Mode
 config = config.load(Mode.DEV)

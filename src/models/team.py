@@ -1,19 +1,12 @@
+import datetime
 import uuid
-from datetime import datetime
+from typing import Any
 
-from sqlalchemy import (
-    JSON,
-    TIMESTAMP,
-    UUID,
-    Boolean,
-    Column,
-    ForeignKey,
-    Integer,
-    String,
-    Text,
-)
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column
 
 from src.database import Base
+from src.models.annotated_types import created_at, int_pk, updated_at, uuid_pk
 from src.models.skill import Skill
 from src.models.user import User
 
@@ -23,85 +16,103 @@ class Team(Base):
     __tablename__ = "team"
     __table_args__ = {"schema": "team"}
 
-    id = Column(UUID, primary_key=True, unique=True, default=uuid.uuid4)
-    owner_id = Column(UUID, ForeignKey(User.id), nullable=False)
-    name = Column(String, nullable=False)
-    image = Column(String, nullable=True)
-    description = Column(Text, nullable=True)
-    member_description = Column(Text, nullable=True)
-    privacy = Column(JSON, nullable=True)  # непанятна
-    created_at = Column(TIMESTAMP, nullable=False, default=datetime.now())
-    updated_at = Column(TIMESTAMP, nullable=False, default=datetime.now())
-    deleted_at = Column(TIMESTAMP, nullable=True)
+    id: Mapped[uuid_pk]
+    owner_id: Mapped[uuid.UUID] = mapped_column(ForeignKey(User.id))
+    name: Mapped[str]
+    image: Mapped[str | None]
+    description: Mapped[str | None]
+    member_description: Mapped[str | None]
+    privacy: Mapped[dict[str, Any] | None]  # непанятна
+    created_at: Mapped[created_at]
+    updated_at = Mapped[updated_at]
+    deleted_at: Mapped[datetime.datetime | None]
 
 
 class UserTeam(Base):
     __tablename__ = "user_team"
     __table_args__ = {"schema": "team"}
 
-    user_uuid = Column(UUID, ForeignKey(User.id), primary_key=True)
-    team_uuid = Column(UUID, ForeignKey(Team.id), primary_key=True)
-    speciality = Column(String, nullable=True)
+    user_uuid: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey(User.id, ondelete="CASCADE"), primary_key=True
+    )
+    team_uuid: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey(Team.id, ondelete="CASCADE"), primary_key=True
+    )
+    speciality: Mapped[str | None]
 
 
 class TeamRole(Base):
     __tablename__ = "team_role"
     __table_args__ = {"schema": "team"}
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    team_uuid = Column(UUID, ForeignKey(Team.id), nullable=False)
-    name = Column(String, nullable=False)
+    id: Mapped[int_pk]
+    team_uuid: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey(Team.id, ondelete="CASCADE")
+    )
+    speciality: Mapped[str | None]
 
 
 class TeamPermission(Base):
     __tablename__ = "team_permission"
     __table_args__ = {"schema": "team"}
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, nullable=False)
-    slug = Column(String, nullable=False)
+    id: Mapped[int_pk]
+    name: Mapped[str]
+    slug: Mapped[str]
 
 
 class TeamRolePermission(Base):
     __tablename__ = "team_role_permission"
     __table_args__ = {"schema": "team"}
 
-    role_id = Column(Integer, ForeignKey(TeamRole.id), primary_key=True)
-    permission_id = Column(Integer, ForeignKey(TeamPermission.id), primary_key=True)
-    value = Column(Boolean, nullable=False)
+    role_id: Mapped[int] = mapped_column(
+        ForeignKey(TeamRole.id, ondelete="CASCADE"), primary_key=True
+    )
+    permission_id: Mapped[int] = mapped_column(
+        ForeignKey(TeamPermission.id, ondelete="CASCADE"), primary_key=True
+    )
+    value: Mapped[bool]
 
 
 class TeamExperience(Base):
     __tablename__ = "team_experience"
     __table_args__ = {"schema": "team"}
 
-    id = Column(Integer, primary_key=True)
-    team_uuid = Column(UUID, ForeignKey(Team.id), nullable=False)
-    date_from = Column(TIMESTAMP, nullable=True)
-    date_to = Column(TIMESTAMP, nullable=False)
-    name = Column(String, nullable=False)
-    description = Column(String, nullable=True)
+    id: Mapped[int_pk]
+    team_uuid: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey(Team.id, ondelete="CASCADE")
+    )
+    date_from: Mapped[datetime.datetime | None]
+    date_to: Mapped[datetime.datetime | None]
+    name: Mapped[str]
+    description: Mapped[str | None]
 
 
-class AD(Base):
+class Ad(Base):
     __tablename__ = "ad"
     __table_args__ = {"schema": "team"}
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    team_uuid = Column(UUID, ForeignKey(Team.id), nullable=False)
-    speciality = Column(String, nullable=True)
-    name = Column(String, nullable=False)
-    description = Column(Text, nullable=True)
-    is_hide = Column(Boolean, nullable=False, default=False)
-    is_promoting = Column(Boolean, nullable=False, default=False)
-    created_at = Column(TIMESTAMP, nullable=False, default=datetime.now())
-    updated_at = Column(TIMESTAMP, nullable=False, default=datetime.now())
-    deleted_at = Column(TIMESTAMP, nullable=True)
+    id: Mapped[int_pk]
+    team_uuid: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey(Team.id, ondelete="CASCADE")
+    )
+    speciality: Mapped[str | None]
+    name: Mapped[str]
+    description: Mapped[str | None]
+    is_hide: Mapped[bool] = mapped_column(default=False)
+    is_promoting: Mapped[bool] = mapped_column(default=False)
+    created_at: Mapped[created_at]
+    updated_at = Mapped[updated_at]
+    deleted_at: Mapped[datetime.datetime | None]
 
 
-class ADSkill(Base):
+class AdSkill(Base):
     __tablename__ = "ad_skill"
     __table_args__ = {"schema": "team"}
 
-    ad_id = Column(Integer, ForeignKey(AD.id), primary_key=True)
-    skill_id = Column(Integer, ForeignKey(Skill.id), primary_key=True)
+    ad_id: Mapped[int] = mapped_column(
+        ForeignKey(Ad.id, ondelete="CASCADE"), primary_key=True
+    )
+    skill_id: Mapped[int] = mapped_column(
+        ForeignKey(Skill.id, ondelete="CASCADE"), primary_key=True
+    )

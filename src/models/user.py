@@ -1,107 +1,114 @@
+import datetime
+import enum
 import uuid
-from datetime import datetime
+from typing import Any
 
-from sqlalchemy import (
-    JSON,
-    TIMESTAMP,
-    UUID,
-    Boolean,
-    Column,
-    ForeignKey,
-    Integer,
-    String,
-)
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column
 
 from src.database import Base
+from src.models.annotated_types import created_at, int_pk, updated_at, uuid_pk
 
 
 class Role(Base):
     __tablename__ = "role"
     __table_args__ = {"schema": "user"}
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, nullable=False)
-    slug = Column(String, nullable=False)
+    id: Mapped[int_pk]
+    name: Mapped[str]
+    slug: Mapped[str]
+
+
+class Sex(enum.Enum):
+    MALE = "male"
+    FEMALE = "female"
 
 
 class User(Base):
     __tablename__ = "user"
     __table_args__ = {"schema": "user"}
 
-    id = Column(UUID, primary_key=True, unique=True, default=uuid.uuid4)
-    name = Column(String, nullable=False)
-    lastname = Column(String, nullable=False)
-    username = Column(String, nullable=False, unique=True)
-    email = Column(String, nullable=False, unique=True)
-    hashed_password = Column(String, nullable=False)
-    is_verified = Column(Boolean, nullable=False, default=False)
-    role_id = Column(Integer, ForeignKey(Role.id), nullable=False)
-    image = Column(String, nullable=True)
-    location = Column(JSON, nullable=True)
-    sex = Column(String, nullable=True)
-    birthday = Column(TIMESTAMP, nullable=True)
+    id: Mapped[uuid_pk]
+    name: Mapped[str]
+    lastname: Mapped[str]
+    username: Mapped[str] = mapped_column(unique=True)
+    email: Mapped[str] = mapped_column(unique=True)
+    hashed_password: Mapped[str]
+    is_verified: Mapped[bool] = mapped_column(default=False)
+    role_id: Mapped[int] = mapped_column(ForeignKey(Role.id))
+    image: Mapped[str | None]
+    location: Mapped[dict[str, Any] | None]
+    sex: Mapped[Sex | None]
+    birthday: Mapped[datetime.datetime | None]
 
-    created_at = Column(TIMESTAMP, nullable=False, default=datetime.now())
-    updated_at = Column(TIMESTAMP, nullable=False, default=datetime.now())
-    deleted_at = Column(TIMESTAMP, nullable=True)
-    is_blocked = Column(Boolean, nullable=False, default=False)
+    created_at: Mapped[created_at]
+    updated_at = Mapped[updated_at]
+    deleted_at: Mapped[datetime.datetime | None]
+
+    is_blocked: Mapped[bool] = mapped_column(default=False)
 
 
 class CV(Base):
     __tablename__ = "cv"
     __table_args__ = {"schema": "user"}
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    user_uuid = Column(UUID, ForeignKey(User.id), nullable=False)
-    description = Column(String, nullable=True)
+    id: Mapped[int_pk]
+    user_uuid: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey(User.id, ondelete="CASCADE")
+    )
+    description: Mapped[str | None]
 
 
 class ContactType(Base):
     __tablename__ = "contact_type"
     __table_args__ = {"schema": "user"}
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, nullable=False)
-    slug = Column(String, nullable=False)
+    id: Mapped[int_pk]
+    name: Mapped[str]
+    slug: Mapped[str]
 
 
 class CVContact(Base):
     __tablename__ = "cv_contact"
     __table_args__ = {"schema": "user"}
 
-    cv_id = Column(Integer, ForeignKey(CV.id), primary_key=True)
-    contact_id = Column(Integer, ForeignKey(ContactType.id), primary_key=True)
+    cv_id: Mapped[int] = mapped_column(
+        ForeignKey(CV.id, ondelete="CASCADE"), primary_key=True
+    )
+    contact_id: Mapped[int] = mapped_column(
+        ForeignKey(ContactType.id, ondelete="CASCADE"), primary_key=True
+    )
 
-    contact_data = Column(String, nullable=True)
-    is_preferred = Column(Boolean, nullable=True)
+    contact_data: Mapped[str | None]
+    is_preferred: Mapped[bool | None]
 
 
 class Education(Base):
     __tablename__ = "education"
     __table_args__ = {"schema": "user"}
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    cv_id = Column(Integer, ForeignKey(CV.id), nullable=False)
+    id: Mapped[int_pk]
+    cv_id: Mapped[int] = mapped_column(ForeignKey(CV.id, ondelete="CASCADE"))
 
-    date_from = Column(TIMESTAMP, nullable=True)
-    date_to = Column(TIMESTAMP, nullable=True)
+    date_from: Mapped[datetime.datetime | None]
+    date_to: Mapped[datetime.datetime | None]
 
-    name = Column(String, nullable=False)
-    description = Column(String, nullable=True)
+    name: Mapped[str]
+    description: Mapped[str | None]
 
 
 class UserExperience(Base):
     __tablename__ = "user_experience"
     __table_args__ = {"schema": "user"}
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    cv_id = Column(Integer, ForeignKey(CV.id), nullable=False)
+    id: Mapped[int_pk]
+    cv_id: Mapped[int] = mapped_column(ForeignKey(CV.id, ondelete="CASCADE"))
 
-    date_from = Column(TIMESTAMP, nullable=True)
-    date_to = Column(TIMESTAMP, nullable=False)
+    date_from: Mapped[datetime.datetime | None]
+    date_to: Mapped[datetime.datetime | None]
 
-    name = Column(String, nullable=False)
-    description = Column(String, nullable=True)
+    name: Mapped[str]
+    description: Mapped[str | None]
 
 
 # TODO: обсудить, зачем нам это надо?
@@ -109,9 +116,11 @@ class Notification(Base):
     __tablename__ = "notification"
     __table_args__ = {"schema": "user"}
 
-    id = Column(Integer, primary_key=True)
-    user_uuid = Column(UUID, ForeignKey(User.id), nullable=False)
-    image = Column(Integer, nullable=True)
-    created_at = Column(TIMESTAMP, nullable=False)
-    title = Column(String, nullable=False)
-    description = Column(String, nullable=True)
+    id: Mapped[int_pk]
+    user_uuid: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey(User.id, ondelete="CASCADE")
+    )
+    image: Mapped[str | None]
+    title: Mapped[str]
+    description: Mapped[str | None]
+    created_at: Mapped[created_at]

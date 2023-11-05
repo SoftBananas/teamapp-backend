@@ -4,8 +4,6 @@ from typing import Self
 from dotenv import load_dotenv
 from yaml import safe_load
 
-from src.core.database import DataBase
-
 
 class Mode(Enum):
     DEV = "configs/dev.yml"
@@ -13,9 +11,8 @@ class Mode(Enum):
     PROD = "configs/prod.yml"
 
 
-class _Config:
+class Config:
     configs: dict
-    database: DataBase
     origins: list[str]
 
     def __init__(self):
@@ -33,15 +30,10 @@ class _Config:
             raise ValueError("YAML file not given")
         self.configs = configs
         load_dotenv(self.configs["env_file"])
-
-        self._set_database()
         self._set_origins()
-
-    def _set_database(self) -> str:
-        self.database = DataBase()
 
     def _set_origins(self):
         self.origins = self.configs["origins"]
 
 
-config = _Config()
+config = Config()

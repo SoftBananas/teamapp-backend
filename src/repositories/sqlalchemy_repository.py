@@ -18,7 +18,6 @@ class SQLAlchemyRepository(AbstractRepository):
 
     async def add(self, model: model_table) -> int | uuid.UUID | IntegrityError:
         try:
-
             model_id = await self.session.execute(
                 insert(self.model_table)
                 .values(**self.get_filled_fields(model))
@@ -30,13 +29,10 @@ class SQLAlchemyRepository(AbstractRepository):
             logger.error(str(error))
             return error
 
-    async def find_by_id(
-            self, model_id: int | uuid.UUID
-    ) -> model_table | Exception:
+    async def find_by_id(self, model_id: int | uuid.UUID) -> model_table | Exception:
         try:
             models = await self.session.execute(
-                select(self.model_table)
-                .filter(self.model_table.id == model_id)
+                select(self.model_table).filter(self.model_table.id == model_id)
             )
             row = models.first()
             if row is not None:
@@ -49,9 +45,7 @@ class SQLAlchemyRepository(AbstractRepository):
 
     async def find_all(self) -> list[model_table] | None | Exception:
         try:
-            models = await self.session.execute(
-                select(self.model_table)
-            )
+            models = await self.session.execute(select(self.model_table))
             rows = models.all()
             if len(rows) > 0:
                 return [row[0] for row in rows]
@@ -77,8 +71,7 @@ class SQLAlchemyRepository(AbstractRepository):
     async def remove(self, model_id: int | uuid.UUID) -> None | IntegrityError:
         try:
             await self.session.execute(
-                delete(self.model_table)
-                .where(self.model_table.id == model_id)
+                delete(self.model_table).where(self.model_table.id == model_id)
             )
             await self.session.commit()
         except IntegrityError as error:
