@@ -12,7 +12,13 @@ from src.database.session_maker import SessionMaker
 if not config.is_loaded:
     raise Exception("Config was not loaded")
 
-__all__ = ["Base", "get_async_session", "engine", "connection", "session_maker"]
+__all__ = [
+    "Base",
+    "get_async_session",
+    "engine",
+    "connection",
+    "session_maker"
+]
 
 connection = Connection(config)
 engine = connection.engine

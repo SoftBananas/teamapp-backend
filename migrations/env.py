@@ -4,26 +4,26 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
-from src.core.config import config
+from src.config.config import config
 
-db = config.load().database
+confing = config.load()
 
 importlib.import_module("src.models")
-
+db = importlib.import_module("src.database")
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 alembic_config = context.config
 
 section = alembic_config.config_ini_section
-alembic_config.set_section_option(section, "DB_DRIVER", db.driver)
-alembic_config.set_section_option(section, "DB_HOST", db.host)
-alembic_config.set_section_option(section, "DB_PORT", db.port)
-alembic_config.set_section_option(section, "DB_NAME", db.name)
-alembic_config.set_section_option(section, "DB_PASSWORD", db.password)
-alembic_config.set_section_option(section, "DB_USER", db.user)
+alembic_config.set_section_option(section, "DB_DRIVER", db.connection.driver)
+alembic_config.set_section_option(section, "DB_HOST", db.connection.host)
+alembic_config.set_section_option(section, "DB_PORT", db.connection.port)
+alembic_config.set_section_option(section, "DB_NAME", db.connection.name)
+alembic_config.set_section_option(section, "DB_PASSWORD", db.connection.password)
+alembic_config.set_section_option(section, "DB_USER", db.connection.user)
 
-# Interpret the core file for Python logging.
+# Interpret the config file for Python logging.
 # This line sets up loggers basically.
 if alembic_config.config_file_name is not None:
     fileConfig(alembic_config.config_file_name)
@@ -32,11 +32,11 @@ if alembic_config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = config.database.metadata
+target_metadata = db.Base.metadata
 
-# other values from the core, defined by the needs of env.py,
+# other values from the config, defined by the needs of env.py,
 # can be acquired:
-# my_important_option = core.get_main_option("my_important_option")
+# my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
 

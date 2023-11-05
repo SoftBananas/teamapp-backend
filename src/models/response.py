@@ -33,9 +33,13 @@ class MessageResponse(Base):
     __tablename__ = "message_response"
     __table_args__ = {"schema": "response"}
 
-    message_id: Mapped[int] = mapped_column(ForeignKey(Message.id), primary_key=True)
+    message_id: Mapped[int] = mapped_column(
+        ForeignKey(Message.id),
+        primary_key=True
+    )
     response_id: Mapped[int] = mapped_column(
-        ForeignKey(AdResponse.id, ondelete="CASCADE"), primary_key=True
+        ForeignKey(AdResponse.id, ondelete="CASCADE"),
+        primary_key=True
     )
 
 
@@ -57,4 +61,6 @@ class CVResponse(Base):
         ForeignKey(Team.id, ondelete="CASCADE")
     )
     cv_id: Mapped[int] = mapped_column(ForeignKey(CV.id))
-    status_id: Mapped[int] = mapped_column(ForeignKey(ResponseStatus.id))
+    status_id: Mapped[int] = mapped_column(
+        ForeignKey(ResponseStatus.id)
+    )

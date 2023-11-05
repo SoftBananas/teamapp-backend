@@ -1,4 +1,11 @@
 env_file: .env.dev
 
+logger:
+  sink: "teamapp-dev.log"
+  format: "{time}\t|\t{level}\t|\t{message}"
+  level: "DEBUG"
+  rotation: "10MB"
+  compression: "zip"
+
 origins:
   - "*"

@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import Base
 from repositories.abstract_repository import AbstractRepository
-from src.utils.logger import logger
+from loguru import logger
 
 
 class SQLAlchemyRepository(AbstractRepository):

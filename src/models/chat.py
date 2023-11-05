@@ -25,7 +25,9 @@ class ChatMember(Base):
     __table_args__ = {"schema": "chat"}
 
     id: Mapped[int_pk]
-    chat_id: Mapped[int] = mapped_column(ForeignKey(Chat.id, ondelete="CASCADE"))
+    chat_id: Mapped[int] = mapped_column(
+        ForeignKey(Chat.id, ondelete="CASCADE")
+    )
     entity_uuid: Mapped[uuid.UUID]
     created_at: Mapped[created_at]
 
@@ -35,7 +37,9 @@ class Message(Base):
     __table_args__ = {"schema": "chat"}
 
     id: Mapped[int_pk]
-    chat_id: Mapped[int] = mapped_column(ForeignKey(Chat.id, ondelete="CASCADE"))
+    chat_id: Mapped[int] = mapped_column(
+        ForeignKey(Chat.id, ondelete="CASCADE")
+    )
     member_id: Mapped[int] = mapped_column(
         ForeignKey(ChatMember.id, ondelete="CASCADE")
     )
@@ -50,7 +54,9 @@ class MessageImage(Base):
     __table_args__ = {"schema": "chat"}
 
     id: Mapped[int_pk]
-    message_id: Mapped[int] = mapped_column(ForeignKey(Message.id, ondelete="CASCADE"))
+    message_id: Mapped[int] = mapped_column(
+        ForeignKey(Message.id, ondelete="CASCADE")
+    )
     image_url: Mapped[str]
 
 
@@ -59,5 +65,7 @@ class MessageFile(Base):
     __table_args__ = {"schema": "chat"}
 
     id: Mapped[int_pk]
-    message_id: Mapped[int] = mapped_column(ForeignKey(Message.id, ondelete="CASCADE"))
+    message_id: Mapped[int] = mapped_column(
+        ForeignKey(Message.id, ondelete="CASCADE")
+    )
     file_url: Mapped[str]

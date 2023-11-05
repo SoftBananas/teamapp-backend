@@ -1,6 +1,3 @@
-import uuid
-from datetime import datetime
-
 from pydantic import BaseModel
 
 from schemas.abstract_schemas import AbstractSchemas
