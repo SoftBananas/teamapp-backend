@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 from yaml import safe_load
 from loguru import logger
 
+from src.config.database_config import DataBaseConfig
+
 
 class Mode(Enum):
     DEV = "configs/dev.yml"
@@ -14,7 +16,7 @@ class Mode(Enum):
 
 class Config:
     configs: dict
-    logger_level: str
+    database: DataBaseConfig
     origins: list[str]
 
     def __init__(self):
@@ -30,8 +32,12 @@ class Config:
             configs = safe_load(config_file)
         self.configs = configs
         load_dotenv(self.configs["env_file"])
+        self.set_database()
         self.set_logger()
         self.set_origins()
+
+    def set_database(self):
+        self.database = DataBaseConfig()
 
     def set_logger(self):
         logger_configs = self.configs["logger"]

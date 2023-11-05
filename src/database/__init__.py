@@ -1,12 +1,11 @@
 from typing import Any, AsyncGenerator
 
-from sqlalchemy import JSON, inspect
+from sqlalchemy import JSON, inspect, MetaData
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import DeclarativeBase
 
 from src.config.config import config
 from src.database.connection import Connection
-from src.database.metadata_maker import MetadataMaker
 from src.database.session_maker import SessionMaker
 
 if not config.is_loaded:
@@ -24,11 +23,10 @@ connection = Connection(config)
 engine = connection.engine
 
 session_maker = SessionMaker(connection)
-_metadata_maker = MetadataMaker(connection)
 
 
 class Base(DeclarativeBase):
-    metadata = _metadata_maker.metadata
+    metadata = MetaData()
     type_annotation_map = {dict[str, Any]: JSON}
 
     def get_dict(self) -> dict:

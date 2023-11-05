@@ -6,7 +6,7 @@ from sqlalchemy import engine_from_config, pool
 
 from src.config.config import config
 
-confing = config.load()
+config.load()
 
 importlib.import_module("src.models")
 db = importlib.import_module("src.database")
