@@ -6,7 +6,7 @@ from sqlalchemy import engine_from_config, pool
 
 from src.config.config import config
 
-config.load()
+confing = config.load()
 
 importlib.import_module("src.models")
 db = importlib.import_module("src.database")
@@ -16,12 +16,12 @@ db = importlib.import_module("src.database")
 alembic_config = context.config
 
 section = alembic_config.config_ini_section
-alembic_config.set_section_option(section, "DB_DRIVER", db.connection.driver)
-alembic_config.set_section_option(section, "DB_HOST", db.connection.host)
-alembic_config.set_section_option(section, "DB_PORT", db.connection.port)
-alembic_config.set_section_option(section, "DB_NAME", db.connection.name)
-alembic_config.set_section_option(section, "DB_PASSWORD", db.connection.password)
-alembic_config.set_section_option(section, "DB_USER", db.connection.user)
+alembic_config.set_section_option(section, "DB_DRIVER", config.database.driver)
+alembic_config.set_section_option(section, "DB_HOST", config.database.host)
+alembic_config.set_section_option(section, "DB_PORT", config.database.port)
+alembic_config.set_section_option(section, "DB_NAME", config.database.name)
+alembic_config.set_section_option(section, "DB_PASSWORD", config.database.password)
+alembic_config.set_section_option(section, "DB_USER", config.database.user)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
