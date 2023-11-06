@@ -1,33 +1,40 @@
+import importlib
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
-
 from alembic import context
-from config.config import DB_DRIVER, DB_HOST, DB_PORT, DB_NAME, DB_PASSWORD, DB_USER
+from sqlalchemy import engine_from_config, pool
+
+from src.config.config import config
+
+config.load()
+
+importlib.import_module("src.models")
+db = importlib.import_module("src.database")
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
-config = context.config
+alembic_config = context.config
 
-section = config.config_ini_section
-config.set_section_option(section, "DB_DRIVER", DB_DRIVER)
-config.set_section_option(section, "DB_HOST", DB_HOST)
-config.set_section_option(section, "DB_PORT", DB_PORT)
-config.set_section_option(section, "DB_NAME", DB_NAME)
-config.set_section_option(section, "DB_PASSWORD", DB_PASSWORD)
-config.set_section_option(section, "DB_USER", DB_USER)
+section = alembic_config.config_ini_section
+alembic_config.set_section_option(section, "DB_DRIVER", config.database.driver)
+alembic_config.set_section_option(section, "DB_HOST", config.database.host)
+alembic_config.set_section_option(section, "DB_PORT", config.database.port)
+alembic_config.set_section_option(section, "DB_NAME", config.database.name)
+alembic_config.set_section_option(
+    section, "DB_PASSWORD", config.database.password
+)
+alembic_config.set_section_option(section, "DB_USER", config.database.user)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
-if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
+if alembic_config.config_file_name is not None:
+    fileConfig(alembic_config.config_file_name)
 
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = metadata
+target_metadata = db.Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -47,7 +54,7 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = config.get_main_option("sqlalchemy.url")
+    url = alembic_config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -67,7 +74,7 @@ def run_migrations_online() -> None:
 
     """
     connectable = engine_from_config(
-        config.get_section(config.config_ini_section, {}),
+        alembic_config.get_section(alembic_config.config_ini_section, {}),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )

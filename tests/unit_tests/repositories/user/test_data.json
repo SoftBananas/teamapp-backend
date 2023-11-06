@@ -1,0 +1,35 @@
+{
+    "users": [
+        {
+            "name": "Ivan",
+            "lastname": "Vnukov",
+            "username": "ONEPANTSU",
+            "email": "conandet@mail.ru",
+            "hashed_password": "12122002",
+            "role_id": 1
+        },
+        {
+            "name": "Banana",
+            "lastname": "Bananov",
+            "username": "SoftySoft",
+            "email": "teamapp@softbananas.com",
+            "hashed_password": "12122002",
+            "role_id": 3
+        }
+    ],
+
+    "roles": [
+        {
+            "name": "Admin",
+            "slug": "admin"
+        },
+        {
+            "name": "Moderator",
+            "slug": "moderator"
+        },
+        {
+            "name": "User",
+            "slug": "user"
+        }
+    ]
+}

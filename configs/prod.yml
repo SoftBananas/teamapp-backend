@@ -1,0 +1,11 @@
+env_file: .env.prod
+
+logger:
+  sink: "teamapp-dev.log"
+  format: "{time}\t|\t{level}\t|\t{message}"
+  level: "INFO"
+  rotation: "10MB"
+  compression: "zip"
+
+origins:
+  - "*"
