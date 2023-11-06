@@ -3,6 +3,7 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
+from models import Sex
 from schemas.abstract_schemas import AbstractSchemas
 
 
@@ -15,7 +16,7 @@ class UserInfo(BaseModel):
     role_id: int
     image: str | None = None
     location: dict | None = None
-    sex: str | None = None
+    sex: Sex | None = None
     birthday: datetime | None = None
 
 
