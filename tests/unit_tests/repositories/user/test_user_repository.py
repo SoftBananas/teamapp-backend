@@ -1,16 +1,16 @@
 import uuid
 
 import pytest
-from src.repositories.user_repositories import UserRepository
-from tests.unit_tests.repositories.utils import get_existing_models
 from sqlalchemy import select
+
 from src.models import User
+from src.repositories.user_repositories import UserRepository
 from tests.conftest import db
+from tests.unit_tests.repositories.utils import get_existing_models
 
 
 @pytest.mark.usefixtures("setup_database")
 class TestUserRepository:
-
     async def test_add(self, user_models):
         for iteration, user in enumerate(user_models):
             async with db.session_maker() as session:
@@ -27,7 +27,9 @@ class TestUserRepository:
         async with db.session_maker() as session:
             repository = UserRepository(session=session)
             existing_users = await get_existing_models(User)
-            existing_uuids = [existing_user.id for existing_user in existing_users]
+            existing_uuids = [
+                existing_user.id for existing_user in existing_users
+            ]
             for user_uuid in existing_uuids:
                 found_user = await repository.find_by_id(user_uuid)
                 assert isinstance(found_user, User)
@@ -79,10 +81,14 @@ class TestUserRepository:
             repository = UserRepository(session=session)
             await repository.add(user_models[1])
             existing_users = await get_existing_models(User)
-            existing_uuids = [existing_user.id for existing_user in existing_users]
+            existing_uuids = [
+                existing_user.id for existing_user in existing_users
+            ]
 
             await repository.remove_all()
 
             for removed_index in range(len(existing_users)):
-                user = await repository.find_by_id(existing_uuids[removed_index])
+                user = await repository.find_by_id(
+                    existing_uuids[removed_index]
+                )
                 assert user is None

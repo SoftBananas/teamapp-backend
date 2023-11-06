@@ -1,15 +1,15 @@
 import asyncio
 import importlib
-from types import ModuleType
 from typing import AsyncGenerator
 
 import pytest
 from fastapi.testclient import TestClient
 from httpx import AsyncClient
+
 from src.config.config import Mode, config
 from src.main import app
 
-config = config.load(Mode.TEST)
+config.load(Mode.TEST)
 importlib.import_module("src.models")
 db = importlib.import_module("src.database")
 

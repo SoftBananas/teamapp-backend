@@ -1,6 +1,6 @@
 from typing import Any, AsyncGenerator
 
-from sqlalchemy import JSON, inspect, MetaData
+from sqlalchemy import JSON, MetaData, inspect
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import DeclarativeBase
 
@@ -16,7 +16,7 @@ __all__ = [
     "get_async_session",
     "engine",
     "connection",
-    "session_maker"
+    "session_maker",
 ]
 
 connection = Connection(config)

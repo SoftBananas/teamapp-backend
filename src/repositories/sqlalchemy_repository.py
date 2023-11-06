@@ -1,12 +1,12 @@
 import uuid
 
+from loguru import logger
 from sqlalchemy import delete, insert, select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import Base
 from repositories.abstract_repository import AbstractRepository
-from loguru import logger
 
 
 class SQLAlchemyRepository(AbstractRepository):
@@ -16,7 +16,9 @@ class SQLAlchemyRepository(AbstractRepository):
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def add(self, model: model_table) -> int | uuid.UUID | IntegrityError:
+    async def add(
+        self, model: model_table
+    ) -> int | uuid.UUID | IntegrityError:
         try:
             model_id = await self.session.execute(
                 insert(self.model_table)
@@ -29,10 +31,14 @@ class SQLAlchemyRepository(AbstractRepository):
             logger.error(str(error))
             return error
 
-    async def find_by_id(self, model_id: int | uuid.UUID) -> model_table | Exception:
+    async def find_by_id(
+        self, model_id: int | uuid.UUID
+    ) -> model_table | Exception:
         try:
             models = await self.session.execute(
-                select(self.model_table).filter(self.model_table.id == model_id)
+                select(self.model_table).filter(
+                    self.model_table.id == model_id
+                )
             )
             row = models.first()
             if row is not None:

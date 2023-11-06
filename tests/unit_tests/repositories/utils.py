@@ -1,8 +1,8 @@
 from pydantic import BaseModel, TypeAdapter
 from sqlalchemy import select
 
-from tests.conftest import db
 from src.database import Base
+from tests.conftest import db
 
 
 def convert_model_to_schema(self, model: Base) -> BaseModel:

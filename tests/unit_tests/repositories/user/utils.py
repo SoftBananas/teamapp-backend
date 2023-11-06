@@ -1,9 +1,9 @@
+from sqlalchemy import delete
+
 from models import User
 from repositories.user_repositories import RoleRepository, UserRepository
 from schemas.user.role_schemas import RoleCreate
 from schemas.user.user_schemas import UserCreate
-from sqlalchemy import delete
-
 from tests.conftest import db
 
 

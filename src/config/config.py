@@ -2,8 +2,8 @@ from enum import Enum
 from typing import Self
 
 from dotenv import load_dotenv
-from yaml import safe_load
 from loguru import logger
+from yaml import safe_load
 
 from src.config.database_config import DataBaseConfig
 

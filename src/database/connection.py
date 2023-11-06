@@ -7,7 +7,6 @@ from src.config.config import Config
 
 
 class Connection:
-
     def __init__(self, config: Config):
         self.db = config.database
         self.engine = self.__create_engine()
