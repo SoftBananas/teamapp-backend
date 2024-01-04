@@ -4,11 +4,11 @@ import uuid
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.database import Base
-from src.models.annotated_types import int_pk
-from src.models.chat import Message
-from src.models.team import Team
-from src.models.user import CV
+from src.core.models.base import Base
+from src.core.models.annotated_types import int_pk
+from src.core.models.chat import Message
+from src.core.models.team import Team
+from src.core.models.user import CV
 
 
 class AdStatus(enum.Enum):
@@ -33,9 +33,7 @@ class MessageResponse(Base):
     __tablename__ = "message_response"
     __table_args__ = {"schema": "response"}
 
-    message_id: Mapped[int] = mapped_column(
-        ForeignKey(Message.id), primary_key=True
-    )
+    message_id: Mapped[int] = mapped_column(ForeignKey(Message.id), primary_key=True)
     response_id: Mapped[int] = mapped_column(
         ForeignKey(AdResponse.id, ondelete="CASCADE"), primary_key=True
     )

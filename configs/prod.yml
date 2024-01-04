@@ -1,7 +1,16 @@
 env_file: .env.prod
 
+app:
+    title: "TEAMAPP"
+    version: "0.0.1"
+    host: "localhost"
+    port: 8000
+
+database:
+    driver: "postgresql+asyncpg"
+
 logger:
-  sink: "teamapp-dev.log"
+  sink: "teamapp-prod.log"
   format: "{time}\t|\t{level}\t|\t{message}"
   level: "INFO"
   rotation: "10MB"

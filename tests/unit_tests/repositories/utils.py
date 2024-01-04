@@ -1,7 +1,7 @@
 from pydantic import BaseModel, TypeAdapter
 from sqlalchemy import select
 
-from src.database import Base
+from core.models.base import Base
 from tests.conftest import db
 
 

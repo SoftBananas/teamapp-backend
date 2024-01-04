@@ -4,11 +4,10 @@ import uuid
 from typing import Any
 
 from sqlalchemy import ForeignKey
-from sqlalchemy.dialects.postgresql import ENUM as PgEnum
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.database import Base
-from src.models.annotated_types import created_at, int_pk, updated_at, uuid_pk
+from src.core.models.base import Base
+from src.core.models.annotated_types import created_at, int_pk, updated_at, uuid_pk
 
 
 class Role(Base):
