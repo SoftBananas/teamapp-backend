@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from schemas.abstract_schemas_fabric import AbstractSchemas
+from src.core.schemas.abstract_schemas_fabric import AbstractSchemasFabric
 
 
 class RoleInfo(BaseModel):
@@ -20,7 +20,7 @@ class RoleRead(RoleInfo):
     id: int
 
 
-class RoleSchemas(AbstractSchemas):
+class RoleSchemas(AbstractSchemasFabric):
     create = RoleCreate
     read = RoleUpdate
     update = RoleRead

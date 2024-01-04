@@ -1,5 +1,12 @@
 env_file: .env.dev
 
+app:
+    host: "localhost"
+    port: 8000
+
+database:
+    driver: "postgresql+asyncpg"
+
 logger:
   sink: "teamapp-dev.log"
   format: "{time}\t|\t{level}\t|\t{message}"

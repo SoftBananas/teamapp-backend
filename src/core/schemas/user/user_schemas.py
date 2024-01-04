@@ -1,9 +1,9 @@
 import uuid
-from datetime import datetime, date
+from datetime import date, datetime
 
-from src.models import Sex
-from src.schemas.abstract_schemas_fabric import AbstractSchemasFabric
-from src.schemas.base_model import ConfigBaseModel
+from src.core.models import Sex
+from src.core.schemas.abstract_schemas_fabric import AbstractSchemasFabric
+from src.core.schemas.base_model import ConfigBaseModel
 
 
 class BaseUserModel(ConfigBaseModel):

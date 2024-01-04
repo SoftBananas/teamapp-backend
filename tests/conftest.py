@@ -5,22 +5,23 @@ from typing import AsyncGenerator
 import pytest
 from fastapi.testclient import TestClient
 from httpx import AsyncClient
-
-from src.config.config import Mode, config
-from src.main import app
+from src.core.models.base import Base
+from src.core.config.config import Mode, config
+from src.core.database import DataBase
+from src.app import App
 
 config.load(Mode.TEST)
-importlib.import_module("src.models")
-db = importlib.import_module("src.database")
+db = DataBase(config)
+app = App(config).init_app()
 
 
 @pytest.fixture(autouse=True, scope="session")
 async def prepare_database():
-    async with db.engine.begin() as conn:
-        await conn.run_sync(db.Base.metadata.create_all)
+    async with db.connection.engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
     yield
-    async with db.engine.begin() as conn:
-        await conn.run_sync(db.Base.metadata.drop_all)
+    async with db.connection.engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
 
 
 # SETUP

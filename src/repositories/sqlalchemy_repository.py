@@ -4,18 +4,20 @@ from loguru import logger
 from sqlalchemy import delete, insert, select, update
 from sqlalchemy.exc import IntegrityError
 
-from src.database import Base, session_maker
+from src.core.database import DataBase
+from src.core.models.base import Base
 from src.repositories.abstract_repository import AbstractRepository
 
 
 class SQLAlchemyRepository(AbstractRepository):
     model_table: type = Base
 
-    async def add(
-        self, model: model_table
-    ) -> int | uuid.UUID | IntegrityError:
+    def __init__(self, database: DataBase):
+        self.db = database
+
+    async def add(self, model: model_table) -> int | uuid.UUID | IntegrityError:
         try:
-            async with session_maker() as session:
+            async with self.db.session_maker() as session:
                 model_id = await session.execute(
                     insert(self.model_table)
                     .values(**self.get_filled_fields(model))
@@ -27,15 +29,11 @@ class SQLAlchemyRepository(AbstractRepository):
             logger.error(str(error))
             raise error
 
-    async def find_by_id(
-        self, model_id: int | uuid.UUID
-    ) -> model_table | Exception:
+    async def find_by_id(self, model_id: int | uuid.UUID) -> model_table | Exception:
         try:
-            async with session_maker() as session:
+            async with self.db.session_maker() as session:
                 models = await session.execute(
-                    select(self.model_table).filter(
-                        self.model_table.id == model_id
-                    )
+                    select(self.model_table).filter(self.model_table.id == model_id)
                 )
             row = models.first()
             if row is not None:
@@ -48,7 +46,7 @@ class SQLAlchemyRepository(AbstractRepository):
 
     async def find_all(self) -> list[model_table] | None | Exception:
         try:
-            async with session_maker() as session:
+            async with self.db.session_maker() as session:
                 models = await session.execute(select(self.model_table))
             rows = models.all()
             if len(rows) > 0:
@@ -61,7 +59,7 @@ class SQLAlchemyRepository(AbstractRepository):
 
     async def edit(self, model: model_table) -> None | IntegrityError:
         try:
-            async with session_maker() as session:
+            async with self.db.session_maker() as session:
                 await session.execute(
                     update(self.model_table)
                     .values(**self.get_filled_fields(model))
@@ -75,7 +73,7 @@ class SQLAlchemyRepository(AbstractRepository):
 
     async def remove(self, model_id: int | uuid.UUID) -> None | IntegrityError:
         try:
-            async with session_maker() as session:
+            async with self.db.session_maker() as session:
                 await session.execute(
                     delete(self.model_table).where(self.model_table.id == model_id)
                 )
@@ -86,7 +84,7 @@ class SQLAlchemyRepository(AbstractRepository):
 
     async def remove_all(self) -> None | IntegrityError:
         try:
-            async with session_maker() as session:
+            async with self.db.session_maker() as session:
                 await session.execute(delete(self.model_table))
                 await session.commit()
         except IntegrityError as error:

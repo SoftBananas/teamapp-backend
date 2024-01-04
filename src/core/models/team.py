@@ -5,10 +5,10 @@ from typing import Any
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.database import Base
-from src.models.annotated_types import created_at, int_pk, updated_at, uuid_pk
-from src.models.skill import Skill
-from src.models.user import User
+from src.core.models.base import Base
+from src.core.models.annotated_types import created_at, int_pk, updated_at, uuid_pk
+from src.core.models.skill import Skill
+from src.core.models.user import User
 
 
 # TODO: разобраться с privacy

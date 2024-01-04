@@ -1,5 +1,3 @@
-from sqlalchemy.exc import IntegrityError
-
 from src.services.responses.service_reponse import ServiceResponse
 
 

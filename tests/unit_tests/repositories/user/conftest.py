@@ -2,22 +2,18 @@ import json
 
 import pytest
 from pydantic import BaseModel
-from unit_tests.repositories.user.utils import (
-    add_role,
-    remove_roles,
-    remove_users,
-)
+from unit_tests.repositories.user.utils import add_role, remove_roles, remove_users
 
-from models import Role, User
-from src.schemas.user.role_schemas import RoleCreate
-from src.schemas.user.user_schemas import UserCreate
+from core.models import Role, User
+from core.schemas.user.role_schemas import RoleCreate
+from core.schemas.user.user_schemas import UserCreate
 
 
 @pytest.fixture(scope="session")
 def user_schemas() -> list[BaseModel]:
-    json_users = json.load(
-        open("tests/unit_tests/repositories/user/test_data.json")
-    )["users"]
+    json_users = json.load(open("tests/unit_tests/repositories/user/test_data.json"))[
+        "users"
+    ]
     users = [UserCreate(**json_user) for json_user in json_users]
     return users
 
@@ -30,9 +26,9 @@ def user_models(user_schemas) -> list[User]:
 
 @pytest.fixture(scope="session")
 def role_schemas() -> list[RoleCreate]:
-    json_roles = json.load(
-        open("tests/unit_tests/repositories/user/test_data.json")
-    )["roles"]
+    json_roles = json.load(open("tests/unit_tests/repositories/user/test_data.json"))[
+        "roles"
+    ]
     users = [RoleCreate(**json_role) for json_role in json_roles]
     return users
 

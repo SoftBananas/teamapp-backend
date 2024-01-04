@@ -1,9 +1,7 @@
-import os
-
 from sqlalchemy import NullPool
 from sqlalchemy.ext.asyncio import create_async_engine
 
-from src.config.config import Config
+from src.core.config.config import Config
 
 
 class Connection:
