@@ -1,3 +1,3 @@
-from src.core.config.config import Mode, config, Config
+from src.core.config.config import Mode, Config
 
-__all__ = ["Mode", "config", "Config"]
+__all__ = ["Mode", "Config"]

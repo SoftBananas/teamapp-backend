@@ -1,6 +1,8 @@
 env_file: .env.prod
 
 app:
+    title: "TEAMAPP"
+    version: "0.0.1"
     host: "localhost"
     port: 8000
 

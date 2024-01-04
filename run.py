@@ -4,7 +4,7 @@ from src.app import App
 
 # TODO: ArgParser for Mode
 config = Config(Mode.DEV)
-app = App(config).init_app()
+app = App(config)
 
 if __name__ == "__main__":
     uvicorn.run(

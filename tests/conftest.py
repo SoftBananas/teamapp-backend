@@ -1,18 +1,17 @@
 import asyncio
-import importlib
 from typing import AsyncGenerator
 
 import pytest
 from fastapi.testclient import TestClient
 from httpx import AsyncClient
 from src.core.models.base import Base
-from src.core.config.config import Mode, config
+from src.core.config.config import Mode, Config
 from src.core.database import DataBase
 from src.app import App
 
-config.load(Mode.TEST)
-db = DataBase(config)
-app = App(config).init_app()
+config = Config(Mode.TEST)
+db = DataBase(config.database)
+app = App(config)
 
 
 @pytest.fixture(autouse=True, scope="session")

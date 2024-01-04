@@ -9,13 +9,11 @@ from src.services.user.user_service import UserService
 
 
 class UserRouter(AbstractRouter):
-    user_service: UserService(UserRepository, UserSchemasFabric)
+    user_service: UserService
 
-    def __init__(self, database: DataBase):
+    def __init__(self, service: UserService):
         self.router = APIRouter(prefix="/users", tags=["users"])
-        self.user_service = UserService(
-            UserRepository(database), UserSchemasFabric
-        )
+        self.user_service = service
 
     def init_routes(self):
         self.router.add_api_route(

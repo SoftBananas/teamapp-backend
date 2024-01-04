@@ -1,12 +1,12 @@
 from sqlalchemy import NullPool
 from sqlalchemy.ext.asyncio import create_async_engine
 
-from src.core.config.config import Config
+from src.core.config.config import DataBaseConfig
 
 
 class Connection:
-    def __init__(self, config: Config):
-        self.db = config.database
+    def __init__(self, db_config: DataBaseConfig):
+        self.db = db_config
         self.engine = self.__create_engine()
 
     def get_url(self) -> str:

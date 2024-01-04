@@ -17,7 +17,6 @@ class Mode(Enum):
 
 
 class Config:
-    configs: dict
     database: DataBaseConfig
     app: AppConfig
     origins: list[str]
@@ -29,29 +28,26 @@ class Config:
             self._set_configs(mode)
             self.is_loaded = True
 
-    def load(self, mode: Mode = Mode.PROD) -> Self:
-        self._set_configs(mode)
-        self.is_loaded = True
-        return self
-
     def _set_configs(self, mode: Mode = Mode.PROD) -> Self:
         with open(f"{mode.value}", "r") as config_file:
-            self.configs = safe_load(config_file)
-        load_dotenv(self.configs["env_file"])
-        self.set_app()
-        self.set_database()
-        self.set_logger()
-        self.set_origins()
+            configs = safe_load(config_file)
+        load_dotenv(configs["env_file"])
+        self.set_app(configs["app"])
+        self.set_database(configs["database"])
+        self.set_logger(configs["logger"])
+        self.set_origins(configs["origins"])
 
-    def set_app(self):
+    def set_app(self, app_config: dict):
         self.app = AppConfig(
-            host=self.configs["app"]["host"],
-            port=self.configs["app"]["port"],
+            title=app_config["title"],
+            version=app_config["version"],
+            host=app_config["host"],
+            port=app_config["port"],
         )
 
-    def set_database(self):
+    def set_database(self, db_config: dict):
         self.database = DataBaseConfig(
-            driver=self.configs["database"]["driver"],
+            driver=db_config["driver"],
             host=os.environ.get("DB_HOST"),
             port=os.environ.get("DB_PORT"),
             name=os.environ.get("DB_NAME"),
@@ -59,19 +55,15 @@ class Config:
             password=os.environ.get("DB_PASSWORD"),
         )
 
-    def set_logger(self):
-        logger_configs = self.configs["logger"]
+    def set_logger(self, logger_config: dict):
         logger.remove()
         logger.add(
-            sink=logger_configs["sink"],
-            format=logger_configs["format"],
-            level=logger_configs["level"],
-            rotation=logger_configs["rotation"],
-            compression=logger_configs["compression"],
+            sink=logger_config["sink"],
+            format=logger_config["format"],
+            level=logger_config["level"],
+            rotation=logger_config["rotation"],
+            compression=logger_config["compression"],
         )
 
-    def set_origins(self):
-        self.origins = self.configs["origins"]
-
-
-config = Config()
+    def set_origins(self, origins_config: dict):
+        self.origins = origins_config
