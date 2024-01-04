@@ -3,6 +3,7 @@ from __future__ import annotations
 from loguru import logger
 from sqlalchemy.exc import IntegrityError
 
+from src.core.schemas.user.user_schemas import UserSchemasFabric
 from src.services.abstract_service import AbstractService
 from src.services.responses.error_responses import (
     error_response,
@@ -13,6 +14,7 @@ from src.services.responses.success_responses import add_success_response
 
 
 class UserService(AbstractService):
+    schemas_fabric = UserSchemasFabric
     create_schema: type
     read_schema: type
     update_schema: type

@@ -1,11 +1,10 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
-from src.core.schemas.user.user_schemas import UserSchemasFabric
-from src.services.user.user_service import UserService
-from src.repositories.user_repositories import UserRepository
+from src.api.http.routers import Routers
+from src.services.services import Services
+from src.repositories.repositories import Repositories
 from src.core.database import DataBase
-from src.api.http.user_router import UserRouter
 from src.core.config.config import Mode, Config
 
 
@@ -31,24 +30,15 @@ class App(FastAPI):
                 "Authorization",
             ],
         )
-        self.include_routers()
 
-    def include_routers(self):
-        routers = self.init_routers()
+        repositories = Repositories(self.database)
+        services = Services(repositories)
+        routers = Routers(services)
+        self.include_routers(routers.get_list())
+
+    def include_routers(self, routers):
         for router in routers:
             self.include_router(
                 router, prefix="/api/v1"
             )
-
-    def init_routers(self):
-        routers = [
-            self.init_user_router(),
-        ]
-        return routers
-
-    def init_user_router(self):
-        user_repository = UserRepository(self.database)
-        user_service = UserService(user_repository, UserSchemasFabric)
-        user_router = UserRouter(user_service)
-        return user_router.init_routes()
 

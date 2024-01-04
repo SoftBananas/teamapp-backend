@@ -3,6 +3,7 @@ from src.repositories.abstract_repository import AbstractRepository
 
 
 class AbstractService:
+    schemas_fabric: type[AbstractSchemasFabric]
     create_schema: type
     read_schema: type
     update_schema: type
@@ -10,10 +11,8 @@ class AbstractService:
     def __init__(
         self,
         repository: AbstractRepository,
-        schemas_fabric: type[AbstractSchemasFabric],
     ):
         self.repository = repository
-
-        self.create_schema = schemas_fabric.create
-        self.read_schema = schemas_fabric.read
-        self.update_schema = schemas_fabric.update
+        self.create_schema = self.schemas_fabric.create
+        self.read_schema = self.schemas_fabric.read
+        self.update_schema = self.schemas_fabric.update
