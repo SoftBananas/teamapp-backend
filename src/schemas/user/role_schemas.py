@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from schemas.abstract_schemas import AbstractSchemas
+from schemas.abstract_schemas_fabric import AbstractSchemas
 
 
 class RoleInfo(BaseModel):

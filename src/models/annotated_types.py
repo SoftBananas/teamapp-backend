@@ -11,12 +11,12 @@ uuid_pk = Annotated[
 ]
 created_at = Annotated[
     datetime.datetime,
-    mapped_column(server_default=text("TIMEZONE('utc', now())")),
+    mapped_column(server_default=text("CURRENT_TIMESTAMP")),
 ]
 updated_at = Annotated[
     datetime.datetime,
     mapped_column(
-        server_default=text("TIMEZONE('utc', now())"),
+        server_default=text("CURRENT_TIMESTAMP"),
         onupdate=datetime.datetime.now(datetime.UTC),
     ),
 ]

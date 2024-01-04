@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 
 
 class AbstractRepository(ABC):
+    model_table: type
+
     @abstractmethod
     async def add(self, model):
         raise NotImplementedError

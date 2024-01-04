@@ -1,13 +1,12 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, date
 
-from pydantic import BaseModel
+from src.models import Sex
+from src.schemas.abstract_schemas_fabric import AbstractSchemasFabric
+from src.schemas.base_model import ConfigBaseModel
 
-from models import Sex
-from schemas.abstract_schemas import AbstractSchemas
 
-
-class UserInfo(BaseModel):
+class BaseUserModel(ConfigBaseModel):
     name: str
     lastname: str
     username: str
@@ -17,22 +16,22 @@ class UserInfo(BaseModel):
     image: str | None = None
     location: dict | None = None
     sex: Sex | None = None
-    birthday: datetime | None = None
+    birthday: date | None = None
 
 
-class UserCreate(UserInfo):
+class UserCreate(BaseUserModel):
     created_at: datetime | None = datetime.now()
     updated_at: datetime | None = datetime.now()
 
 
-class UserUpdate(UserInfo):
+class UserUpdate(BaseUserModel):
     id: uuid.UUID
     updated_at: datetime | None = datetime.now()
     is_verified: bool
     is_blocked: bool
 
 
-class UserRead(UserInfo):
+class UserRead(BaseUserModel):
     id: uuid.UUID
     is_verified: bool
     created_at: datetime
@@ -40,7 +39,7 @@ class UserRead(UserInfo):
     is_blocked: bool
 
 
-class UserSchemas(AbstractSchemas):
+class UserSchemasFabric(AbstractSchemasFabric):
     create = UserCreate
     read = UserRead
     update = UserUpdate

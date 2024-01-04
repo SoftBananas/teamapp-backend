@@ -4,6 +4,7 @@ import uuid
 from typing import Any
 
 from sqlalchemy import ForeignKey
+from sqlalchemy.dialects.postgresql import ENUM as PgEnum
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.database import Base
@@ -19,7 +20,9 @@ class Role(Base):
     slug: Mapped[str]
 
 
+# TODO: разобраться с PgEnum
 class Sex(enum.Enum):
+    __table_args__ = {"schema": "user"}
     MALE = "male"
     FEMALE = "female"
 
@@ -39,7 +42,7 @@ class User(Base):
     image: Mapped[str | None]
     location: Mapped[dict[str, Any] | None]
     sex: Mapped[Sex | None]
-    birthday: Mapped[datetime.datetime | None]
+    birthday: Mapped[datetime.date | None]
 
     created_at: Mapped[created_at]
     updated_at = Mapped[updated_at]
