@@ -2,9 +2,7 @@ from fastapi import APIRouter
 from starlette.responses import JSONResponse
 
 from src.api.http.abstract_router import AbstractRouter
-from src.core.database import DataBase
-from src.repositories.user_repositories import UserRepository
-from src.core.schemas.user.user_schemas import UserCreate, UserSchemasFabric
+from src.core.schemas.user.user_schemas import UserCreate
 from src.services.user.user_service import UserService
 
 
