@@ -23,3 +23,7 @@ class AbstractRepository(ABC):
     @abstractmethod
     async def remove(self, model_id):
         raise NotImplementedError
+
+    @abstractmethod
+    async def remove_all(self):
+        raise NotImplementedError

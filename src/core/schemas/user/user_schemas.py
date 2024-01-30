@@ -25,7 +25,6 @@ class UserCreate(BaseUserModel):
 
 
 class UserUpdate(BaseUserModel):
-    id: uuid.UUID
     updated_at: datetime | None = datetime.now()
     is_verified: bool
     is_blocked: bool
