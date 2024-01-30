@@ -9,13 +9,13 @@ from tests.conftest import db
 from tests.unit_tests.repositories.utils import get_existing_models
 
 
+@pytest.mark.asyncio(scope="class")
 @pytest.mark.usefixtures("setup_database")
 class TestUserRepository:
     async def test_add(self, user_models):
         for iteration, user in enumerate(user_models):
             repository = UserRepository(db)
             await repository.add(user)
-
             async with db.session_maker() as session:
                 result = await session.execute(select(User))
                 found_users = result.all()
