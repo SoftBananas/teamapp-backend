@@ -1,18 +1,19 @@
-"""all_tables
+"""auth
 
-Revision ID: 2964dee4a967
+Revision ID: 6e54e5dcc823
 Revises: 
-Create Date: 2024-01-04 21:09:27.617543
+Create Date: 2024-02-03 12:21:16.511632
 
 """
 from typing import Sequence, Union
 
+import fastapi_users_db_sqlalchemy
 from alembic import op
 import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '2964dee4a967'
+revision: str = '6e54e5dcc823'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -122,28 +123,33 @@ def upgrade() -> None:
     schema='subscription'
     )
     op.create_table('user',
-    sa.Column('id', sa.Uuid(), nullable=False),
+    sa.Column('id', fastapi_users_db_sqlalchemy.generics.GUID(), nullable=False),
+    sa.Column('email', sa.String(length=320), nullable=False),
+    sa.Column('username', sa.String(), nullable=False),
+    sa.Column('hashed_password', sa.String(length=1024), nullable=False),
+
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('lastname', sa.String(), nullable=False),
-    sa.Column('username', sa.String(), nullable=False),
-    sa.Column('email', sa.String(), nullable=False),
-    sa.Column('hashed_password', sa.String(), nullable=False),
-    sa.Column('is_verified', sa.Boolean(), nullable=False),
     sa.Column('role_id', sa.Integer(), nullable=False),
     sa.Column('image', sa.String(), nullable=True),
     sa.Column('location', sa.JSON(), nullable=True),
     sa.Column('sex', sa.Enum('MALE', 'FEMALE', name='sex'), nullable=True),
     sa.Column('birthday', sa.Date(), nullable=True),
+
+    sa.Column('is_blocked', sa.Boolean(), nullable=False),
+    sa.Column('is_active', sa.Boolean(), nullable=False),
+    sa.Column('is_superuser', sa.Boolean(), nullable=False),
+    sa.Column('is_verified', sa.Boolean(), nullable=False),
+
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
     sa.Column('deleted_at', sa.DateTime(), nullable=True),
-    sa.Column('is_blocked', sa.Boolean(), nullable=False),
+
     sa.ForeignKeyConstraint(['role_id'], ['user.role.id'], ),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email'),
-    sa.UniqueConstraint('id'),
     sa.UniqueConstraint('username'),
     schema='user'
     )
+    op.create_index(op.f('ix_user_user_email'), 'user', ['email'], unique=True, schema='user')
     op.create_table('message',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('chat_id', sa.Integer(), nullable=False),
@@ -158,7 +164,7 @@ def upgrade() -> None:
     schema='chat'
     )
     op.create_table('settings',
-    sa.Column('id', sa.Uuid(), nullable=False),
+    sa.Column('id', fastapi_users_db_sqlalchemy.generics.GUID(), nullable=False),
     sa.Column('is_notifying', sa.Boolean(), nullable=False),
     sa.Column('is_mailing', sa.Boolean(), nullable=False),
     sa.ForeignKeyConstraint(['id'], ['user.user.id'], ondelete='CASCADE'),
@@ -178,7 +184,7 @@ def upgrade() -> None:
     )
     op.create_table('subscription',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('user_uuid', sa.Uuid(), nullable=False),
+    sa.Column('user_uuid', fastapi_users_db_sqlalchemy.generics.GUID(), nullable=False),
     sa.Column('subscription_id', sa.Integer(), nullable=False),
     sa.Column('date_start', sa.DateTime(), nullable=True),
     sa.Column('date_end', sa.DateTime(), nullable=True),
@@ -192,7 +198,7 @@ def upgrade() -> None:
     )
     op.create_table('team',
     sa.Column('id', sa.Uuid(), nullable=False),
-    sa.Column('owner_id', sa.Uuid(), nullable=False),
+    sa.Column('owner_id', fastapi_users_db_sqlalchemy.generics.GUID(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('image', sa.String(), nullable=True),
     sa.Column('description', sa.String(), nullable=True),
@@ -207,7 +213,7 @@ def upgrade() -> None:
     )
     op.create_table('cv',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('user_uuid', sa.Uuid(), nullable=False),
+    sa.Column('user_uuid', fastapi_users_db_sqlalchemy.generics.GUID(), nullable=False),
     sa.Column('description', sa.String(), nullable=True),
     sa.ForeignKeyConstraint(['user_uuid'], ['user.user.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id'),
@@ -215,7 +221,7 @@ def upgrade() -> None:
     )
     op.create_table('notification',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('user_uuid', sa.Uuid(), nullable=False),
+    sa.Column('user_uuid', fastapi_users_db_sqlalchemy.generics.GUID(), nullable=False),
     sa.Column('image', sa.String(), nullable=True),
     sa.Column('title', sa.String(), nullable=False),
     sa.Column('description', sa.String(), nullable=True),
@@ -301,7 +307,7 @@ def upgrade() -> None:
     schema='team'
     )
     op.create_table('user_team',
-    sa.Column('user_uuid', sa.Uuid(), nullable=False),
+    sa.Column('user_uuid', fastapi_users_db_sqlalchemy.generics.GUID(), nullable=False),
     sa.Column('team_uuid', sa.Uuid(), nullable=False),
     sa.Column('speciality', sa.String(), nullable=True),
     sa.ForeignKeyConstraint(['team_uuid'], ['team.team.id'], ondelete='CASCADE'),
@@ -384,6 +390,7 @@ def downgrade() -> None:
     op.drop_table('sale', schema='subscription')
     op.drop_table('settings', schema='settings')
     op.drop_table('message', schema='chat')
+    op.drop_index(op.f('ix_user_user_email'), table_name='user', schema='user')
     op.drop_table('user', schema='user')
     op.drop_table('subscription_type', schema='subscription')
     op.drop_table('chat_member', schema='chat')

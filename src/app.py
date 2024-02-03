@@ -2,10 +2,11 @@ from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
 from src.api.http.routers import Routers
-from src.services.services import Services
-from src.repositories.repositories import Repositories
+from src.core.config.config import Config, Mode
 from src.core.database import DataBase
-from src.core.config.config import Mode, Config
+from src.repositories.repositories import Repositories
+from src.services.services import Services
+from src.services.user import AuthCore, UserService
 
 
 class App(FastAPI):
@@ -32,13 +33,10 @@ class App(FastAPI):
         )
 
         repositories = Repositories(self.database)
-        services = Services(repositories)
+        services = Services(repositories, self.config, self.database)
         routers = Routers(services)
         self.include_routers(routers.get_list())
 
     def include_routers(self, routers):
         for router in routers:
-            self.include_router(
-                router, prefix="/api/v1"
-            )
-
+            self.include_router(router, prefix="/api/v1")

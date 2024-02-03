@@ -1,83 +1,50 @@
-from __future__ import annotations
+"""
+UserService отвечает за аутентификацию и регистрацию пользователя.
+Всё что нужно - переопределить и дополнять методы из BaseUserManager
+Использует AuthCore с информацией о стратегии (JWT) и транспортировке (Cookies)
+
+Данный сервис используется всеми роутерами в api.http.user.auth
+
+TODO: не очень нравится, что ему надо передавать database
+TODO: хочется её вынести куда-нибудь в слой репозитория
+
+"""
 
 import uuid
+from typing import Optional
 
-from loguru import logger
-from sqlalchemy.exc import IntegrityError
-from pydantic import TypeAdapter
-from src.core.schemas.user.user_schemas import UserSchemasFabric
-from src.services.abstract_service import AbstractService
+from fastapi import Request
+from fastapi_users import BaseUserManager, UUIDIDMixin
+from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
+
+from src.core.config import Config
+from src.core.database import DataBase
+from src.core.models import User
+from src.services.user.auth_core import AuthCore
 
 
-class UserService(AbstractService):
-    schemas_fabric = UserSchemasFabric
-    create_schema: type
-    read_schema: type
-    update_schema: type
+class UserService(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
+    model_table = User
 
-    async def add_user(
-        self, user: create_schema
-    ) -> uuid.UUID | IntegrityError | Exception:
-        try:
-            user = self.repository.model_table(**user.dict())
-            model_id = await self.repository.add(user)
-            logger.debug(f"User created: {user}")
-            return model_id
+    def __init__(self, config: Config, database: DataBase):
+        self.auth = AuthCore(config.auth_jwt_secret)
+        self.reset_password_token_secret = config.reset_password_token_secret
+        self.verification_token_secret = config.verification_token_secret
+        user_db = SQLAlchemyUserDatabase(database.session_maker(), self.model_table)
+        super().__init__(user_db)
 
-        except IntegrityError as error:
-            logger.error(str(error))
-            return error
+    def __call__(self):
+        return self
 
-        except Exception as error:
-            logger.error(str(error))
-            return error
+    async def on_after_register(self, user: User, request: Optional[Request] = None):
+        print(f"User {user.id} has registered.")
 
-    async def edit_user(
-        self, user_id: uuid.UUID, user: update_schema
-    ) -> None | IntegrityError | Exception:
-        try:
-            user = self.repository.model_table(id=user_id, **user.dict())
-            await self.repository.edit(user)
-            logger.debug(f"User edited: {user}")
+    async def on_after_forgot_password(
+        self, user: User, token: str, request: Optional[Request] = None
+    ):
+        print(f"User {user.id} has forgot their password. Reset token: {token}")
 
-        except IntegrityError as error:
-            logger.error(str(error))
-            return error
-
-        except Exception as error:
-            logger.error(str(error))
-            return error
-
-    async def get_user_by_id(self, user_id: int) -> read_schema | Exception:
-        try:
-            user = await self.repository.find_by_id(user_id)
-            logger.debug(f"User found: {user}")
-            return TypeAdapter(self.read_schema).validate_python(user)
-        except Exception as error:
-            logger.error(str(error))
-            return error
-
-    async def get_all_users(self) -> list[read_schema] | Exception:
-        try:
-            users = await self.repository.find_all()
-            logger.debug(f"Users found: {users}")
-            return TypeAdapter(list[self.read_schema]).validate_python(users)
-        except Exception as error:
-            logger.error(str(error))
-            return error
-
-    async def delete_user(self, user_id: int | uuid.UUID) -> None | Exception:
-        try:
-            await self.repository.remove(user_id)
-            logger.debug(f"User deleted: {user_id}")
-        except Exception as error:
-            logger.error(str(error))
-            return error
-
-    async def delete_all(self) -> None | Exception:
-        try:
-            await self.repository.remove_all()
-            logger.debug(f"Users deleted: all")
-        except Exception as error:
-            logger.error(str(error))
-            return error
+    async def on_after_request_verify(
+        self, user: User, token: str, request: Optional[Request] = None
+    ):
+        print(f"Verification requested for user {user.id}. Verification token: {token}")

@@ -20,6 +20,9 @@ class Config:
     database: DataBaseConfig
     app: AppConfig
     origins: list[str]
+    auth_jwt_secret: str
+    reset_password_token_secret: str
+    verification_token_secret: str
 
     def __init__(self, mode: Mode | None = None) -> Self:
         if mode is None:
@@ -36,6 +39,7 @@ class Config:
         self.set_database(configs["database"])
         self.set_logger(configs["logger"])
         self.set_origins(configs["origins"])
+        self.set_auth()
 
     def set_app(self, app_config: dict):
         self.app = AppConfig(
@@ -67,3 +71,8 @@ class Config:
 
     def set_origins(self, origins_config: dict):
         self.origins = origins_config
+
+    def set_auth(self):
+        self.auth_jwt_secret = os.environ.get("JWT_SECRET")
+        self.reset_password_token_secret = os.environ.get("RESET_PASSWORD_TOKEN_SECRET")
+        self.verification_token_secret = os.environ.get("VERIFICATION_TOKEN_SECRET")

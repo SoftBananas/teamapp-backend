@@ -3,9 +3,9 @@ import uuid
 from fastapi import APIRouter, HTTPException
 from starlette.responses import JSONResponse
 
+from services.example_service import UserService
 from src.api.http.abstract_router import AbstractRouter
 from src.core.schemas.user.user_schemas import UserCreate, UserUpdate
-from src.services.user.user_service import UserService
 
 
 class UserRouter(AbstractRouter):
@@ -44,7 +44,7 @@ class UserRouter(AbstractRouter):
 
         self.router.add_api_route(
             path="{user_id}",
-            endpoint=self.get_user,
+            endpoint=self.delete_user,
             methods=["DELETE"],
             status_code=200,
         )

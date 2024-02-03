@@ -3,11 +3,12 @@ import enum
 import uuid
 from typing import Any
 
+from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTableUUID
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.core.models.base import Base
 from src.core.models.annotated_types import created_at, int_pk, updated_at, uuid_pk
+from src.core.models.base import Base
 
 
 class Role(Base):
@@ -26,17 +27,15 @@ class Sex(enum.Enum):
     FEMALE = "female"
 
 
-class User(Base):
+class User(SQLAlchemyBaseUserTableUUID, Base):
     __tablename__ = "user"
     __table_args__ = {"schema": "user"}
 
     id: Mapped[uuid_pk]
+
     name: Mapped[str]
     lastname: Mapped[str]
     username: Mapped[str] = mapped_column(unique=True)
-    email: Mapped[str] = mapped_column(unique=True)
-    hashed_password: Mapped[str]
-    is_verified: Mapped[bool] = mapped_column(default=False)
     role_id: Mapped[int] = mapped_column(ForeignKey(Role.id))
     image: Mapped[str | None]
     location: Mapped[dict[str, Any] | None]

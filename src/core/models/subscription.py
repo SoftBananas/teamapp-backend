@@ -4,8 +4,8 @@ import uuid
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.core.models.base import Base
 from src.core.models.annotated_types import int_pk
+from src.core.models.base import Base
 from src.core.models.user import User
 
 
