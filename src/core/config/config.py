@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from loguru import logger
 from yaml import safe_load
 
+from src.core.config.auth_config import AuthConfig
 from src.core.config.app_config import AppConfig
 from src.core.config.database_config import DataBaseConfig
 
@@ -20,9 +21,7 @@ class Config:
     database: DataBaseConfig
     app: AppConfig
     origins: list[str]
-    auth_jwt_secret: str
-    reset_password_token_secret: str
-    verification_token_secret: str
+    auth: AuthConfig
 
     def __init__(self, mode: Mode | None = None) -> Self:
         if mode is None:
@@ -59,7 +58,8 @@ class Config:
             password=os.environ.get("DB_PASSWORD"),
         )
 
-    def set_logger(self, logger_config: dict):
+    @staticmethod
+    def set_logger(logger_config: dict):
         logger.remove()
         logger.add(
             sink=logger_config["sink"],
@@ -73,6 +73,8 @@ class Config:
         self.origins = origins_config
 
     def set_auth(self):
-        self.auth_jwt_secret = os.environ.get("JWT_SECRET")
-        self.reset_password_token_secret = os.environ.get("RESET_PASSWORD_TOKEN_SECRET")
-        self.verification_token_secret = os.environ.get("VERIFICATION_TOKEN_SECRET")
+        self.auth = AuthConfig(
+            auth_jwt_secret=os.environ.get("JWT_SECRET"),
+            reset_password_token_secret=os.environ.get("RESET_PASSWORD_TOKEN_SECRET"),
+            verification_token_secret=os.environ.get("VERIFICATION_TOKEN_SECRET")
+        )

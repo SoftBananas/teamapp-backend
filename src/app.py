@@ -33,7 +33,7 @@ class App(FastAPI):
         )
 
         repositories = Repositories(self.database)
-        services = Services(repositories, self.config, self.database)
+        services = Services(repositories, self.config)
         routers = Routers(services)
         self.include_routers(routers.get_list())
 

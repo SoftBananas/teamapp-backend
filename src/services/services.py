@@ -6,7 +6,7 @@ from src.services.user import *
 
 class Services:
     def __init__(
-        self, repositories: Repositories, config: Config, database: DataBase
+        self, repositories: Repositories, config: Config
     ) -> None:
-        self.user_service = UserService(config, database)
+        self.user_service = UserService(repositories.user_repository, config.auth)
         # self.example_service = UserService(repositories.user_repository)
