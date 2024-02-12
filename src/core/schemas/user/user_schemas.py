@@ -36,26 +36,6 @@ class UserUpdate(schemas.BaseUserUpdate, BaseUserModel):
     is_blocked: bool
 
 
-#
-# class UserCreate(BaseUserModel):
-#     created_at: datetime | None = datetime.now()
-#     updated_at: datetime | None = datetime.now()
-#
-#
-# class UserUpdate(BaseUserModel):
-#     updated_at: datetime | None = datetime.now()
-#     is_verified: bool
-#     is_blocked: bool
-#
-#
-# class UserRead(BaseUserModel):
-#     id: uuid.UUID
-#     is_verified: bool
-#     created_at: datetime
-#     deleted_at: datetime | None
-#     is_blocked: bool
-
-
 class UserSchemasFabric(AbstractSchemasFabric):
     create = UserCreate
     read = UserRead
