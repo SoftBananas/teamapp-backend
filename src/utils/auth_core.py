@@ -4,12 +4,17 @@ from fastapi_users.authentication import (
     JWTStrategy,
 )
 
+from src.core.config import AuthConfig
+
 
 class AuthCore:
     AUTH_BACKEND_NAME = "jwt"
 
-    def __init__(self, jwt_secret: str):
-        self.secret = jwt_secret
+    def __init__(self, config: AuthConfig):
+        self.jwt_secret = config.auth_jwt_secret
+        self.reset_password_token_secret = config.reset_password_token_secret
+        self.verification_token_secret = config.verification_token_secret
+
         self.cookie_transport = CookieTransport(
             cookie_name="teamapp_auth", cookie_max_age=3600
         )
@@ -20,4 +25,4 @@ class AuthCore:
         )
 
     def get_jwt_strategy(self) -> JWTStrategy:
-        return JWTStrategy(secret=self.secret, lifetime_seconds=3600)
+        return JWTStrategy(secret=self.jwt_secret, lifetime_seconds=3600)

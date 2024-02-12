@@ -1,3 +1,7 @@
-from src.core.config.config import Config, Mode
+from src.core.config.config import AuthConfig, Config, Mode
 
-__all__ = ["Mode", "Config"]
+__all__ = [
+    "AuthConfig",
+    "Config",
+    "Mode",
+]

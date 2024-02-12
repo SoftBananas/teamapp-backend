@@ -1,8 +1,8 @@
-"""auth
+"""user_module
 
-Revision ID: 6e54e5dcc823
+Revision ID: 493f721dd34e
 Revises: 
-Create Date: 2024-02-03 12:21:16.511632
+Create Date: 2024-02-12 21:49:03.932686
 
 """
 from typing import Sequence, Union
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '6e54e5dcc823'
+revision: str = '493f721dd34e'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -123,27 +123,23 @@ def upgrade() -> None:
     schema='subscription'
     )
     op.create_table('user',
-    sa.Column('id', fastapi_users_db_sqlalchemy.generics.GUID(), nullable=False),
-    sa.Column('email', sa.String(length=320), nullable=False),
-    sa.Column('username', sa.String(), nullable=False),
-    sa.Column('hashed_password', sa.String(length=1024), nullable=False),
-
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('lastname', sa.String(), nullable=False),
+    sa.Column('username', sa.String(), nullable=False),
     sa.Column('role_id', sa.Integer(), nullable=False),
     sa.Column('image', sa.String(), nullable=True),
     sa.Column('location', sa.JSON(), nullable=True),
     sa.Column('sex', sa.Enum('MALE', 'FEMALE', name='sex'), nullable=True),
     sa.Column('birthday', sa.Date(), nullable=True),
-
+    sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
+    sa.Column('deleted_at', sa.DateTime(), nullable=True),
     sa.Column('is_blocked', sa.Boolean(), nullable=False),
+    sa.Column('id', fastapi_users_db_sqlalchemy.generics.GUID(), nullable=False),
+    sa.Column('email', sa.String(length=320), nullable=False),
+    sa.Column('hashed_password', sa.String(length=1024), nullable=False),
     sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.Column('is_superuser', sa.Boolean(), nullable=False),
     sa.Column('is_verified', sa.Boolean(), nullable=False),
-
-    sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
-    sa.Column('deleted_at', sa.DateTime(), nullable=True),
-
     sa.ForeignKeyConstraint(['role_id'], ['user.role.id'], ),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('username'),
@@ -213,20 +209,30 @@ def upgrade() -> None:
     )
     op.create_table('cv',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('user_uuid', fastapi_users_db_sqlalchemy.generics.GUID(), nullable=False),
+    sa.Column('user_id', fastapi_users_db_sqlalchemy.generics.GUID(), nullable=False),
+    sa.Column('speciality', sa.String(), nullable=False),
     sa.Column('description', sa.String(), nullable=True),
-    sa.ForeignKeyConstraint(['user_uuid'], ['user.user.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['user_id'], ['user.user.id'], ondelete='CASCADE'),
+    sa.PrimaryKeyConstraint('id'),
+    schema='user'
+    )
+    op.create_table('follower',
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('follower_id', fastapi_users_db_sqlalchemy.generics.GUID(), nullable=False),
+    sa.Column('user_id', fastapi_users_db_sqlalchemy.generics.GUID(), nullable=False),
+    sa.ForeignKeyConstraint(['follower_id'], ['user.user.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['user_id'], ['user.user.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id'),
     schema='user'
     )
     op.create_table('notification',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('user_uuid', fastapi_users_db_sqlalchemy.generics.GUID(), nullable=False),
+    sa.Column('user_id', fastapi_users_db_sqlalchemy.generics.GUID(), nullable=False),
     sa.Column('image', sa.String(), nullable=True),
     sa.Column('title', sa.String(), nullable=False),
     sa.Column('description', sa.String(), nullable=True),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
-    sa.ForeignKeyConstraint(['user_uuid'], ['user.user.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['user_id'], ['user.user.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id'),
     schema='user'
     )
@@ -330,8 +336,9 @@ def upgrade() -> None:
     sa.Column('cv_id', sa.Integer(), nullable=False),
     sa.Column('date_from', sa.DateTime(), nullable=True),
     sa.Column('date_to', sa.DateTime(), nullable=True),
-    sa.Column('name', sa.String(), nullable=False),
-    sa.Column('description', sa.String(), nullable=True),
+    sa.Column('organization', sa.String(), nullable=False),
+    sa.Column('speciality', sa.String(), nullable=False),
+    sa.Column('type', sa.String(), nullable=False),
     sa.ForeignKeyConstraint(['cv_id'], ['user.cv.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id'),
     schema='user'
@@ -384,6 +391,7 @@ def downgrade() -> None:
     op.drop_table('message_image', schema='chat')
     op.drop_table('message_file', schema='chat')
     op.drop_table('notification', schema='user')
+    op.drop_table('follower', schema='user')
     op.drop_table('cv', schema='user')
     op.drop_table('team', schema='team')
     op.drop_table('subscription', schema='subscription')

@@ -1,6 +1,7 @@
 import uvicorn
-from src.core.config import Config, Mode
+
 from src.app import App
+from src.core.config import Config, Mode
 
 # TODO: ArgParser for Mode
 config = Config(Mode.DEV)

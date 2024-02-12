@@ -6,8 +6,8 @@ from dotenv import load_dotenv
 from loguru import logger
 from yaml import safe_load
 
-from src.core.config.auth_config import AuthConfig
 from src.core.config.app_config import AppConfig
+from src.core.config.auth_config import AuthConfig
 from src.core.config.database_config import DataBaseConfig
 
 
@@ -76,5 +76,5 @@ class Config:
         self.auth = AuthConfig(
             auth_jwt_secret=os.environ.get("JWT_SECRET"),
             reset_password_token_secret=os.environ.get("RESET_PASSWORD_TOKEN_SECRET"),
-            verification_token_secret=os.environ.get("VERIFICATION_TOKEN_SECRET")
+            verification_token_secret=os.environ.get("VERIFICATION_TOKEN_SECRET"),
         )

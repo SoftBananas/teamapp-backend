@@ -3,7 +3,8 @@ from sqlalchemy import delete
 from core.models import User
 from core.schemas.user.role_schemas import RoleCreate
 from core.schemas.user.user_schemas import UserCreate
-from repositories.user_repositories import RoleRepository, UserRepository
+from repositories.user.sqlalchemy.user_repository import (RoleRepository,
+                                                          UserRepository)
 from tests.conftest import db
 
 

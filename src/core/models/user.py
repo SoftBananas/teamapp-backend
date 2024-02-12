@@ -54,9 +54,8 @@ class CV(Base):
     __table_args__ = {"schema": "user"}
 
     id: Mapped[int_pk]
-    user_uuid: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey(User.id, ondelete="CASCADE")
-    )
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey(User.id, ondelete="CASCADE"))
+    speciality: Mapped[str]
     description: Mapped[str | None]
 
 
@@ -94,8 +93,9 @@ class Education(Base):
     date_from: Mapped[datetime.datetime | None]
     date_to: Mapped[datetime.datetime | None]
 
-    name: Mapped[str]
-    description: Mapped[str | None]
+    organization: Mapped[str]
+    speciality: Mapped[str]
+    type: Mapped[str]
 
 
 class UserExperience(Base):
@@ -112,16 +112,24 @@ class UserExperience(Base):
     description: Mapped[str | None]
 
 
-# TODO: обсудить, зачем нам это надо?
 class Notification(Base):
     __tablename__ = "notification"
     __table_args__ = {"schema": "user"}
 
     id: Mapped[int_pk]
-    user_uuid: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey(User.id, ondelete="CASCADE")
-    )
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey(User.id, ondelete="CASCADE"))
     image: Mapped[str | None]
     title: Mapped[str]
     description: Mapped[str | None]
     created_at: Mapped[created_at]
+
+
+class Follower(Base):
+    __tablename__ = "follower"
+    __table_args__ = {"schema": "user"}
+
+    id: Mapped[int_pk]
+    follower_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey(User.id, ondelete="CASCADE")
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey(User.id, ondelete="CASCADE"))

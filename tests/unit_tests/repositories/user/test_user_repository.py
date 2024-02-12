@@ -3,8 +3,8 @@ import uuid
 import pytest
 from sqlalchemy import select
 
+from repositories.user.sqlalchemy.user_repository import UserRepository
 from src.core.models import User
-from src.repositories.user_repositories import UserRepository
 from tests.conftest import db
 from tests.unit_tests.repositories.utils import get_existing_models
 

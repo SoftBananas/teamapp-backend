@@ -14,18 +14,17 @@ from fastapi import Request
 from fastapi_users import BaseUserManager, UUIDIDMixin
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 
-from src.core.config.auth_config import AuthConfig
 from src.core.models import User
-from src.services.user.auth_core import AuthCore
+from src.utils.auth_core import AuthCore
 
 
 class UserService(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
     model_table = User
 
-    def __init__(self, repository: SQLAlchemyUserDatabase, config: AuthConfig):
-        self.auth = AuthCore(config.auth_jwt_secret)
-        self.reset_password_token_secret = config.reset_password_token_secret
-        self.verification_token_secret = config.verification_token_secret
+    def __init__(self, repository: SQLAlchemyUserDatabase, auth_core: AuthCore):
+        self.auth = auth_core
+        self.reset_password_token_secret = self.auth.reset_password_token_secret
+        self.verification_token_secret = self.auth.verification_token_secret
         super().__init__(repository)
 
     def __call__(self):

@@ -6,7 +6,7 @@ from src.core.config.config import Config, Mode
 from src.core.database import DataBase
 from src.repositories.repositories import Repositories
 from src.services.services import Services
-from src.services.user import AuthCore, UserService
+from src.utils.auth_core import AuthCore
 
 
 class App(FastAPI):
@@ -33,7 +33,8 @@ class App(FastAPI):
         )
 
         repositories = Repositories(self.database)
-        services = Services(repositories, self.config)
+        auth_core = AuthCore(self.config.auth)
+        services = Services(repositories, auth_core)
         routers = Routers(services)
         self.include_routers(routers.get_list())
 

@@ -5,25 +5,25 @@ class AbstractRepository(ABC):
     model_table: type
 
     @abstractmethod
-    async def add(self, model):
+    async def create(self, model):
         raise NotImplementedError
 
     @abstractmethod
-    async def find_by_id(self, model_id):
+    async def get(self, model_id):
         raise NotImplementedError
 
     @abstractmethod
-    async def find_all(self):
+    async def get_all(self):
         raise NotImplementedError
 
     @abstractmethod
-    async def edit(self, model):
+    async def update(self, model):
         raise NotImplementedError
 
     @abstractmethod
-    async def remove(self, model_id):
+    async def delete(self, model_id):
         raise NotImplementedError
 
     @abstractmethod
-    async def remove_all(self):
+    async def delete_all(self):
         raise NotImplementedError
