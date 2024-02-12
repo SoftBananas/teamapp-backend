@@ -1,14 +1,23 @@
+from src.api.http.user import *
 from src.services.services import Services
-from src.api.http.user_router import UserRouter
 
 
 class Routers:
-    routers = []
 
     def __init__(self, services: Services):
+        self.auth_router = AuthRouter(services.user_service).init_routes()
+        self.register_router = RegisterRouter(services.user_service).init_routes()
+        self.verify_router = VerifyRouter(services.user_service).init_routes()
+        self.reset_password_router = ResetPasswordRouter(
+            services.user_service
+        ).init_routes()
         self.user_router = UserRouter(services.user_service).init_routes()
 
-    def get_list(self):
-        return [
-            self.user_router,
+        self.routers = [
+            self.__dict__[router]
+            for router in self.__dict__
+            if router.endswith("_router")
         ]
+
+    def get_list(self):
+        return self.routers

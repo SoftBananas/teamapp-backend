@@ -2,7 +2,8 @@ import json
 
 import pytest
 from pydantic import BaseModel
-from unit_tests.repositories.user.utils import add_role, remove_roles, remove_users
+from unit_tests.repositories.user.utils import (add_role, remove_roles,
+                                                remove_users)
 
 from core.models import Role, User
 from core.schemas.user.role_schemas import RoleCreate

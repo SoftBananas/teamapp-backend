@@ -1,4 +1,5 @@
 from typing import Any
+
 from sqlalchemy import JSON, MetaData, inspect
 from sqlalchemy.orm import DeclarativeBase
 

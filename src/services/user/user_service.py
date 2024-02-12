@@ -1,37 +1,44 @@
-from __future__ import annotations
+"""
+UserService отвечает за аутентификацию и регистрацию пользователя.
+Всё что нужно - переопределить и дополнять методы из BaseUserManager
+Использует AuthCore с информацией о стратегии (JWT) и транспортировке (Cookies),
+а также UserRepository (наследник SQLAlchemyUserDatabase из FastAPIUsers)
 
-from loguru import logger
-from sqlalchemy.exc import IntegrityError
+Данный сервис используется всеми роутерами в api.http.user.auth
+"""
 
-from src.core.schemas.user.user_schemas import UserSchemasFabric
-from src.services.abstract_service import AbstractService
-from src.services.responses.error_responses import (
-    error_response,
-    integrity_error_response,
-)
-from src.services.responses.service_reponse import ServiceResponse
-from src.services.responses.success_responses import add_success_response
+import uuid
+from typing import Optional
+
+from fastapi import Request
+from fastapi_users import BaseUserManager, UUIDIDMixin
+from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
+
+from src.core.models import User
+from src.utils.auth_core import AuthCore
 
 
-class UserService(AbstractService):
-    schemas_fabric = UserSchemasFabric
-    create_schema: type
-    read_schema: type
-    update_schema: type
+class UserService(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
+    model_table = User
 
-    async def add_user(self, user: create_schema) -> ServiceResponse:
-        try:
-            user = self.repository.model_table(**user.dict())
-            model_id = await self.repository.add(user)
-            logger.debug(f"User created: {user}")
-            print(f"\n{model_id=}\n")
-            return add_success_response(str(model_id))
+    def __init__(self, repository: SQLAlchemyUserDatabase, auth_core: AuthCore):
+        self.auth = auth_core
+        self.reset_password_token_secret = self.auth.reset_password_token_secret
+        self.verification_token_secret = self.auth.verification_token_secret
+        super().__init__(repository)
 
-        except IntegrityError as error:
-            logger.error(str(error))
-            return integrity_error_response(str(error))
+    def __call__(self):
+        return self
 
-        except Exception as error:
-            logger.error(str(error))
-            print(str(error))
-            return error_response(str(error))
+    async def on_after_register(self, user: User, request: Optional[Request] = None):
+        print(f"User {user.id} has registered.")
+
+    async def on_after_forgot_password(
+        self, user: User, token: str, request: Optional[Request] = None
+    ):
+        print(f"User {user.id} has forgot their password. Reset token: {token}")
+
+    async def on_after_request_verify(
+        self, user: User, token: str, request: Optional[Request] = None
+    ):
+        print(f"Verification requested for user {user.id}. Verification token: {token}")

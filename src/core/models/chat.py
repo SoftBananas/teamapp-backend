@@ -4,8 +4,8 @@ import uuid
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.core.models.base import Base
 from src.core.models.annotated_types import created_at, int_pk, updated_at
+from src.core.models.base import Base
 
 
 class Chat(Base):

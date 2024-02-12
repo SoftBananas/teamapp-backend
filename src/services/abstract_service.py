@@ -1,3 +1,5 @@
+from pydantic import TypeAdapter
+
 from src.core.schemas.abstract_schemas_fabric import AbstractSchemasFabric
 from src.repositories.abstract_repository import AbstractRepository
 

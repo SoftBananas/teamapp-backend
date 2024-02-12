@@ -7,6 +7,7 @@ from loguru import logger
 from yaml import safe_load
 
 from src.core.config.app_config import AppConfig
+from src.core.config.auth_config import AuthConfig
 from src.core.config.database_config import DataBaseConfig
 
 
@@ -20,6 +21,7 @@ class Config:
     database: DataBaseConfig
     app: AppConfig
     origins: list[str]
+    auth: AuthConfig
 
     def __init__(self, mode: Mode | None = None) -> Self:
         if mode is None:
@@ -36,6 +38,7 @@ class Config:
         self.set_database(configs["database"])
         self.set_logger(configs["logger"])
         self.set_origins(configs["origins"])
+        self.set_auth()
 
     def set_app(self, app_config: dict):
         self.app = AppConfig(
@@ -55,7 +58,8 @@ class Config:
             password=os.environ.get("DB_PASSWORD"),
         )
 
-    def set_logger(self, logger_config: dict):
+    @staticmethod
+    def set_logger(logger_config: dict):
         logger.remove()
         logger.add(
             sink=logger_config["sink"],
@@ -67,3 +71,10 @@ class Config:
 
     def set_origins(self, origins_config: dict):
         self.origins = origins_config
+
+    def set_auth(self):
+        self.auth = AuthConfig(
+            auth_jwt_secret=os.environ.get("JWT_SECRET"),
+            reset_password_token_secret=os.environ.get("RESET_PASSWORD_TOKEN_SECRET"),
+            verification_token_secret=os.environ.get("VERIFICATION_TOKEN_SECRET"),
+        )

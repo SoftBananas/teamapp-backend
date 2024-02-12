@@ -3,11 +3,12 @@ import enum
 import uuid
 from typing import Any
 
+from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTableUUID
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.core.models.base import Base
 from src.core.models.annotated_types import created_at, int_pk, updated_at, uuid_pk
+from src.core.models.base import Base
 
 
 class Role(Base):
@@ -26,17 +27,15 @@ class Sex(enum.Enum):
     FEMALE = "female"
 
 
-class User(Base):
+class User(SQLAlchemyBaseUserTableUUID, Base):
     __tablename__ = "user"
     __table_args__ = {"schema": "user"}
 
     id: Mapped[uuid_pk]
+
     name: Mapped[str]
     lastname: Mapped[str]
     username: Mapped[str] = mapped_column(unique=True)
-    email: Mapped[str] = mapped_column(unique=True)
-    hashed_password: Mapped[str]
-    is_verified: Mapped[bool] = mapped_column(default=False)
     role_id: Mapped[int] = mapped_column(ForeignKey(Role.id))
     image: Mapped[str | None]
     location: Mapped[dict[str, Any] | None]
@@ -55,9 +54,8 @@ class CV(Base):
     __table_args__ = {"schema": "user"}
 
     id: Mapped[int_pk]
-    user_uuid: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey(User.id, ondelete="CASCADE")
-    )
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey(User.id, ondelete="CASCADE"))
+    speciality: Mapped[str]
     description: Mapped[str | None]
 
 
@@ -95,8 +93,9 @@ class Education(Base):
     date_from: Mapped[datetime.datetime | None]
     date_to: Mapped[datetime.datetime | None]
 
-    name: Mapped[str]
-    description: Mapped[str | None]
+    organization: Mapped[str]
+    speciality: Mapped[str]
+    type: Mapped[str]
 
 
 class UserExperience(Base):
@@ -113,16 +112,24 @@ class UserExperience(Base):
     description: Mapped[str | None]
 
 
-# TODO: обсудить, зачем нам это надо?
 class Notification(Base):
     __tablename__ = "notification"
     __table_args__ = {"schema": "user"}
 
     id: Mapped[int_pk]
-    user_uuid: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey(User.id, ondelete="CASCADE")
-    )
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey(User.id, ondelete="CASCADE"))
     image: Mapped[str | None]
     title: Mapped[str]
     description: Mapped[str | None]
     created_at: Mapped[created_at]
+
+
+class Follower(Base):
+    __tablename__ = "follower"
+    __table_args__ = {"schema": "user"}
+
+    id: Mapped[int_pk]
+    follower_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey(User.id, ondelete="CASCADE")
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey(User.id, ondelete="CASCADE"))
