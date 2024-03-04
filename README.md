@@ -1,5 +1,7 @@
 # ![TEAMAPP](https://github.com/SoftBananas/teamapp-backend/blob/main-banana/migrations/res/icons/logo.svg)
 
+[![Build Status](https://github.com/SoftBananas/teamapp-backend/actions/workflows/check.yml/badge.svg?branch=main-banana)](https://github.com/SoftBananas/teamapp-backend/actions/workflows/check.yml/)
+
 ## 📒 Description
 
 **TEAMAPP** is a web application developed by SoftBananas
