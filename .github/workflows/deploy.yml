@@ -20,7 +20,7 @@ jobs:
 
   server_update:
     needs: push_to_registry
-    name: Update server buy ssh
+    name: Update server by ssh
     runs-on: ubuntu-latest
     steps:
       - name: Connect and run script
@@ -30,5 +30,14 @@ jobs:
           port: ${{ secrets.SERVER_PORT }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          script_stop: true
-          script: bash scripts/deploy.sh
+          command: |
+            cd teamapp || 
+            cd mkdir teamapp && 
+            cd teamapp && 
+            git clone https://github.com/SoftBananas/teamapp-backend
+            git pull
+            echo "Stop containers"
+            docker-compose down
+            echo "Start container"
+            docker-compose up -d
+            echo "Finish deploying!"
