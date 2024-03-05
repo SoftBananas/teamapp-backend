@@ -26,6 +26,15 @@ jobs:
           docker-compose -f docker-compose.yml build
           docker-compose -f docker-compose.yml push
 
-      - name: SSH into server and deploy
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install sshpass
+        run: sudo apt-get install -y sshpass
+
+      - name: Copy docker-compose.yml to server
+        run: scp -P ${{ secrets.SERVER_PORT }} docker-compose.yml ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}:/home/ivan/teamapp/docker-compose.yml
+
+      - name: Deploy to server
         run: |
-          sshpass -p ${{ secrets.SERVER_PASSWORD }} ssh -tt -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }} 'cd /home/ivan && (cd teamapp || (cd mkdir teamapp && cd teamapp && git clone https://github.com/SoftBananas/teamapp-backend.git && git pull)) && cd teamapp && touch .env.prod && echo "${{ secrets.ENV }}" > .env.prod && docker-compose -f docker-compose.yml down && docker-compose -f docker-compose.yml up -d'
+          sshpass -p ${{ secrets.SERVER_PASSWORD }} ssh -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }} "cd /home/ivan/teamapp/ && docker-compose up -d"
