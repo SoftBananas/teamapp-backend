@@ -30,14 +30,5 @@ jobs:
           port: ${{ secrets.SERVER_PORT }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          command: |
-            cd teamapp || 
-            cd mkdir teamapp && 
-            cd teamapp && 
-            git clone https://github.com/SoftBananas/teamapp-backend
-            git pull
-            echo "Stop containers"
-            docker-compose down
-            echo "Start container"
-            docker-compose up -d
-            echo "Finish deploying!"
+          script_stop: true
+          script: bash scripts/deploy.sh
