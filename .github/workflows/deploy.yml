@@ -25,12 +25,14 @@ jobs:
           docker-compose -f docker-compose.yml build
           docker-compose -f docker-compose.yml push
 
-      - name: Install sshpass
-        run: sudo apt-get install -y sshpass
+      - name: Configure SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
 
       - name: Copy docker-compose.yml to server
-        run: scp -P ${{ secrets.SERVER_PORT }} docker-compose.yml ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}:${{ secrets.SERVER_PATH }}/docker-compose.yml
+        run: scp -o StrictHostKeyChecking=no -P ${{ secrets.SERVER_PORT }} docker-compose.yml ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}:${{ secrets.SERVER_PATH }}/docker-compose.yml
 
       - name: Deploy to server
         run: |
-          sshpass -p ${{ secrets.SERVER_PASSWORD }} ssh -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }} "cd ${{ secrets.SERVER_PATH }}/ && docker-compose up -d"
+          sshpass -p ${{ secrets.SERVER_PASSWORD }} ssh -o StrictHostKeyChecking=no -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }} "cd ${{ secrets.SERVER_PATH }} && docker-compose up -d"
