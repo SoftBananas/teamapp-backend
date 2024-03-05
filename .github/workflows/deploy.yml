@@ -26,5 +26,6 @@ jobs:
 
       - name: SSH into server and deploy
         run: |
+          echo "${{ secrets.ENV }}" > .env.prod
           cat scripts/deploy.sh | 
           sshpass -p ${{ secrets.PASSWORD }} ssh -p ${{ secrets.SERVER_PORT }} ${{ secrets.USERNAME }}@${{ secrets.SERVER_HOST }} 'bash -s'
