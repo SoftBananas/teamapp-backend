@@ -23,11 +23,8 @@ jobs:
     name: Update server buy ssh
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the repo
-        uses: actions/checkout@v2
-
       - name: Connect and run script
-        uses: appleboy/ssh-action@v1.0.3
+        uses: SoftBananas/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_HOST }}
           port: ${{ secrets.SERVER_PORT }}
