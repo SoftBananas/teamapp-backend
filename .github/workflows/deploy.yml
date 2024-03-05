@@ -20,21 +20,20 @@ jobs:
 
   server_update:
     needs: push_to_registry
-    name: Update server buy ssh
+    name: Update server by ssh
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
 
       - name: Connect and run script
-        uses: cross-the-world/ssh-scp-ssh-pipelines@v1.1.4
+        uses: garygrossgarten/github-action-ssh@0.7.0
         with:
           host: ${{ secrets.SERVER_HOST }}
           port: ${{ secrets.SERVER_PORT }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          connect_timeout: 10s
-          first_ssh: |
+          command: |
             cd teamapp || 
             cd mkdir teamapp && 
             cd teamapp && 
