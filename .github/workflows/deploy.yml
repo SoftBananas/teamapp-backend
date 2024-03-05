@@ -33,8 +33,8 @@ jobs:
         run: sudo apt-get install -y sshpass
 
       - name: Copy docker-compose.yml to server
-        run: scp -P ${{ secrets.SERVER_PORT }} docker-compose.yml ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}:/home/ivan/teamapp/docker-compose.yml
+        run: scp -o StrictHostKeyChecking=no -P ${{ secrets.SERVER_PORT }} docker-compose.yml ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}:/home/ivan/teamapp/docker-compose.yml
 
       - name: Deploy to server
         run: |
-          sshpass -p ${{ secrets.SERVER_PASSWORD }} ssh -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }} "cd /home/ivan/teamapp/ && docker-compose up -d"
+          sshpass -p ${{ secrets.SERVER_PASSWORD }} ssh -o StrictHostKeyChecking=no -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }} "cd /home/ivan/teamapp/ && docker-compose up -d"
