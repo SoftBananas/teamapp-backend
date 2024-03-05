@@ -21,6 +21,8 @@ jobs:
 
       - name: Build and push Docker image
         run: |
+          touch .env.prod
+          echo "${{ secrets.ENV }}" > .env.prod
           docker-compose -f docker-compose.yml build
           docker-compose -f docker-compose.yml push
 
@@ -34,4 +36,6 @@ jobs:
           cd teamapp
           touch .env.prod
           echo "${{ secrets.ENV }}" > .env.prod
+          docker-compose -f docker-compose.yml down
+          docker-compose -f docker-compose.yml up -d
           '
