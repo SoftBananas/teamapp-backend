@@ -27,10 +27,11 @@ jobs:
       - name: SSH into server and deploy
         run: |
           sshpass -p ${{ secrets.PASSWORD }} ssh -p ${{ secrets.SERVER_PORT }} ${{ secrets.USERNAME }}@${{ secrets.SERVER_HOST }}
-          'cd teamapp ||
+          '
+          cd /home/ivan
+          cd teamapp ||
           cd mkdir teamapp && cd teamapp && git clone https://github.com/SoftBananas/teamapp-backend.git && git pull
           cd teamapp
           touch .env.prod
           echo "${{ secrets.ENV }}" > .env.prod
-          docker-compose down
-          docker-compose up -d '
+          '
