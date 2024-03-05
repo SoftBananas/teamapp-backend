@@ -6,7 +6,7 @@ services:
     image: postgres:15
     container_name: db_app
     env_file:
-      - ${{ secrets.ENV }}
+      - .env.prod
     command: -p 5432
     expose:
       - 5432
@@ -17,7 +17,7 @@ services:
     image: onepantsu/teamapp:latest
     container_name: fastapi_app
     env_file:
-      - ${{ secrets.ENV }}
+      - .env.prod
     command: ["/teamapp/docker/start_app.sh"]
     ports:
       - "19888:8000"
