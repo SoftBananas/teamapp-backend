@@ -28,7 +28,7 @@ jobs:
 
       - name: SSH into server and deploy
         run: |
-          sshpass -p ${{ secrets.SERVER_PASSWORD }} ssh -P ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}
+          sshpass -p ${{ secrets.SERVER_PASSWORD }} ssh -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}
           cd /home/ivan
           cd teamapp ||
           cd mkdir teamapp && cd teamapp && git clone https://github.com/SoftBananas/teamapp-backend.git && git pull
