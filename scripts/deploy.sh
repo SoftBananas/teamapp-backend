@@ -9,4 +9,4 @@ docker-compose down
 echo "Start container"
 docker-compose up -d
 
-echo "Finish deployin!"
+echo "Finish deploying!"
