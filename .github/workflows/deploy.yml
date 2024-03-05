@@ -23,13 +23,7 @@ jobs:
         run: |
           docker-compose -f docker-compose.yml build
           docker-compose -f docker-compose.yml push
-
       - name: SSH into server and deploy
-        uses: appleboy/ssh-action@v2
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          port: ${{ secrets.SERVER_PORT }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          script_stop: true
-          script: bash scripts/deploy.sh
+        run: |
+          cat scripts/deploy.sh | 
+          sshpass -p ${{ secrets.PASSWORD }} ssh -p ${{ secrets.SERVER_PORT }} ${{ secrets.USERNAME }}@${{ secrets.SERVER_HOST }} 'bash -s'
