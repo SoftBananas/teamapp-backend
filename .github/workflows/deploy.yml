@@ -23,24 +23,12 @@ jobs:
     name: Update server by ssh
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the repo
-        uses: actions/checkout@v2
-
       - name: Connect and run script
-        uses: garygrossgarten/github-action-ssh@0.7.0
+        uses: SoftBananas/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_HOST }}
           port: ${{ secrets.SERVER_PORT }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          command: |
-            cd teamapp || 
-            cd mkdir teamapp && 
-            cd teamapp && 
-            git clone https://github.com/SoftBananas/teamapp-backend
-            git pull
-            echo "Stop containers"
-            docker-compose down
-            echo "Start container"
-            docker-compose up -d
-            echo "Finish deploying!"
+          script_stop: true
+          script: bash scripts/deploy.sh
