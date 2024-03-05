@@ -5,8 +5,8 @@ on:
     branches: [ main-banana ]
 
 jobs:
+
   server_update:
-    needs: push_to_registry
     name: Update server by ssh
     runs-on: ubuntu-latest
     steps:
