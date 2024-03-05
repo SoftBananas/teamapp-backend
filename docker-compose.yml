@@ -3,22 +3,21 @@ services:
   db:
     image: postgres:15
     container_name: db_app
+    env_file:
+      - .env.prod
     command: -p 5432
     expose:
       - 5432
     volumes:
       - ./.databases/postgres:/var/lib/postgresql/data
-    env_file:
-      - .env-deploy
 
   app:
-    build:
-      context: .
-    env_file:
-      - .env-deploy
+    image: onepantsu/teamapp:latest
     container_name: fastapi_app
+    env_file:
+      - .env.prod
     command: ["/teamapp/docker/start_app.sh"]
     ports:
-      - "8888:8000"
+      - "19888:8000"
     depends_on:
       - db
