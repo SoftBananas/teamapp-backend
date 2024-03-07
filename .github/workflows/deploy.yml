@@ -9,9 +9,6 @@ env:
   SERVER_PORT: 22
   SERVER_USER: root
   SERVER_PATH: /home/teamapp
-  SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
-  SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
-  SSH_PATH: ~/.ssh
   
 jobs:
 
@@ -35,15 +32,16 @@ jobs:
           docker-compose -f docker-compose.yml build
           docker-compose -f docker-compose.yml push
         
-      - name: Create SSH key
-        run: |
-          mkdir -p ~/.ssh/
-          echo "$env.SSH_PRIVATE_KEY" > {{ $env.SSH_PATH }}/private.key
-          sudo chmod 600 $env.SSH_PATH/private.key
-          echo "$env.SSH_KNOWN_HOSTS" > ${{ env.SSH_PATH }}/known_hosts
-        shell: bash
-        
       - name: SSH Connection
         run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_PRIVATE_KEY" > ../private.key
+          sudo chmod 600 ../private.key
+          echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
           ssh -i ${{ env.SSH_PATH }}/private.key ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}
           echo "Connected"
+        shell: bash
+        env:
+          SSH_PRIVATE_KEY: ${{secrets.SSH_KEY}}
+          SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
+          SSH_KEY_PATH: ${{ github.workspace }}/../private.key
