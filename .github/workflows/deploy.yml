@@ -47,4 +47,5 @@ jobs:
         run: sudo apt install rsync -y
         
       - name: Deploy to Server
-        run: rsync --archive --compress --progress . ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}:${{ env.SERVER_PATH }}
+        run: ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ env.SERVER_HOST }} "mkdir -p ${{ env.SERVER_PATH }}"
+        # run: rsync --archive --compress --progress . ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}:${{ env.SERVER_PATH }}
