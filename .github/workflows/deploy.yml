@@ -32,11 +32,10 @@ jobs:
           docker-compose -f docker-compose.yml build
           docker-compose -f docker-compose.yml push
 
-      - name: Install SSH Key
-        uses: shimataro/ssh-key-action@v2.3.1
-        with:
-          key: ${{ secrets.SSH_KEY }}
-          known_hosts: ""
+      - name: Install SSH key
+        run: |
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
         
       - name: Generate Auth Hosts
         run: ssh-keyscan -H ${{ env.SERVER_HOST }} >> ~/.ssh/known_hosts
