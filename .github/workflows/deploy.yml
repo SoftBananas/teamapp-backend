@@ -32,16 +32,17 @@ jobs:
           docker-compose -f docker-compose.yml build
           docker-compose -f docker-compose.yml push
         
-      - name: SSH Connection
+      - name: Deploy to the Server
         run: |
           mkdir -p ~/.ssh/
           echo "$SSH_PRIVATE_KEY" > ../private.key
           sudo chmod 600 ../private.key
           echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
           echo "${{ secrets.SSH_PASSPHRASE }}" | ssh-agent bash -c "ssh-add ../private.key; ssh -o StrictHostKeyChecking=no -tt ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}"
-          cd ${{ SERVER_PATH }} && docker-compose down || mkdir ${{ SERVER_PATH }} && cd ${{ SERVER_PATH }} && git clone https://github.com/SoftBananas/teamapp-backend.git
+          cd ${{ env.SERVER_PATH }} && docker-compose down || mkdir ${{ env.SERVER_PATH }} && cd ${{ env.SERVER_PATH }} && git clone https://github.com/SoftBananas/teamapp-backend.git
           git pull
           docker-compose up -d
+          exit
         shell: bash
         env:
           SSH_PRIVATE_KEY: ${{secrets.SSH_KEY}}
