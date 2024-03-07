@@ -4,13 +4,20 @@ on:
   push:
     branches: [ main-banana ]
 
+env:
+  SERVER_HOST: 109.172.81.237
+  SERVER_PORT: 22
+  SERVER_USER: root
+  SERVER_PATh: /home/teamapp
+
 jobs:
+
   deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3.0.0
@@ -25,19 +32,14 @@ jobs:
           docker-compose -f docker-compose.yml build
           docker-compose -f docker-compose.yml push
 
-      - name: Install sshpass
-        run: sudo apt-get install -y sshpass
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2.3.1
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          known_hosts: ""
+        
+      - name: Generate Auth Hosts
+        run: ssh-keyscan -H ${{ env.SERVER_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Configure SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -t rsa ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
-
-      - name: Copy docker-compose.yml to server
-        run: scp -P ${{ secrets.SERVER_PORT }} docker-compose.yml ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}:${{ secrets.SERVER_PATH }}/docker-compose.yml
-
-      - name: Deploy to server
-        run: |
-          sshpass -p ${{ secrets.SERVER_PASSWORD }} ssh -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }} "cd ${{ secrets.SERVER_PATH }} && docker-compose up -d"
+      - name: Deploy to Server
+        run: rsync --archive --compress --progress . ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}:${{ SERVER_PATH }}
