@@ -9,7 +9,7 @@ env:
   SERVER_PORT: 22
   SERVER_USER: root
   SERVER_PATH: /home/teamapp
-
+  
 jobs:
 
   deploy:
@@ -31,21 +31,13 @@ jobs:
           echo "${{ secrets.ENV }}" > .env.prod
           docker-compose -f docker-compose.yml build
           docker-compose -f docker-compose.yml push
-          
-      - name: Create SSH directory
-        run: mkdir -p ~/.ssh
-        
-      - name: Install SSH key
-        run: |
-          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-
-      - name: Generate Auth Hosts
-        run: ssh-keyscan -H ${{ env.SERVER_HOST }} >> ~/.ssh/known_hosts
-        
-      - name: Install rsync
-        run: sudo apt install rsync -y
         
       - name: Deploy to Server
-        run: ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ env.SERVER_HOST }} "mkdir -p ${{ env.SERVER_PATH }}"
-        # run: rsync --archive --compress --progress . ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}:${{ env.SERVER_PATH }}
+        run: |
+          sudo apt-get install -y ssh rsync
+          echo "$SSH_KEY" > deploy_key.pem
+          chmod 600 deploy_key.pem
+          ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.SERVER_HOST }} "mkdir -p ${{ env.SERVER_PATH }}"
+        
+        env: 
+          SSH_KEY: ${{ secrets.SSH_KEY }}
