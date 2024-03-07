@@ -32,15 +32,19 @@ jobs:
           docker-compose -f docker-compose.yml build
           docker-compose -f docker-compose.yml push
         
-      - name: Deploy to Server
+      - name: Create SSH key
         run: |
-          mkdir ~/.ssh
-          chmod 700 ~/.ssh/
-          echo "$SSH_KEY" > ~/.ssh/deploy_key.pem
-          chmod 600 ~/.ssh/deploy_key.pem
-          ssh-keyscan -H ${{ env.SERVER_HOST }} >> ~/.ssh/known_host
-          chmod 600 ~/.ssh/known_host
-          ssh -i ~/.ssh/deploy_key.pem -o StrictHostKeyChecking=no ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "mkdir -p ${{ env.SERVER_PATH }}"
-        
-        env: 
-          SSH_KEY: ${{ secrets.SSH_KEY }}
+          mkdir -p ~/.ssh/
+          echo "$SSH_PRIVATE_KEY" > ../private.key
+          sudo chmod 600 ../private.key
+          echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+        shell: bash
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
+          SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
+          SSH_KEY_PATH: ${{ github.workspace }}/../private.key
+          
+      - name: SSH Connection
+        run: |
+          ssh -i $SSH_KEY_PATH ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}
+          echo "Connected"
