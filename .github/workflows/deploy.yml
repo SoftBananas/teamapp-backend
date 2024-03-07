@@ -35,11 +35,13 @@ jobs:
       - name: Install SSH key
         run: |
           echo ${{ secrets.SSH_KEY }} > ~/.ssh/id_rsa
-          echo ~/.ssh
           chmod 600 ~/.ssh/id_rsa
         
       - name: Generate Auth Hosts
         run: ssh-keyscan -H ${{ env.SERVER_HOST }} >> ~/.ssh/known_hosts
-
+        
+      - name: Install rsync
+        run: apt install rsync
+        
       - name: Deploy to Server
         run: rsync --archive --compress --progress . ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}:${{ env.SERVER_PATH }}
