@@ -40,8 +40,10 @@ jobs:
           echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
           echo "${{ secrets.SSH_PASSPHRASE }}" | ssh-agent bash -c "\
           ssh-add ../private.key; ssh -o StrictHostKeyChecking=no -tt ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} '\
-          cd ${{ env.SERVER_PATH }} && docker-compose down || \ 
-          mkdir ${{ env.SERVER_PATH }} && cd ${{ env.SERVER_PATH }} && git clone https://github.com/SoftBananas/teamapp-backend.git;
+          cd ${{ env.SERVER_PATH }}/teamapp-backend && docker-compose down || \ 
+          mkdir ${{ env.SERVER_PATH }} && cd ${{ env.SERVER_PATH }} && 
+          git clone https://github.com/SoftBananas/teamapp-backend.git && 
+          cd teamapp-backend;
           git pull;
           cd teamapp-backend;
           docker-compose up -d; \
