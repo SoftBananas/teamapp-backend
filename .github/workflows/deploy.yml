@@ -36,7 +36,9 @@ jobs:
         run: mkdir -p ~/.ssh
         
       - name: Install SSH key
-        run: echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+        run: |
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
 
       - name: Generate Auth Hosts
         run: ssh-keyscan -H ${{ env.SERVER_HOST }} >> ~/.ssh/known_hosts
