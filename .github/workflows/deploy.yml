@@ -34,7 +34,8 @@ jobs:
 
       - name: Install SSH key
         run: |
-          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          echo ${{ secrets.SSH_KEY }} > ~/.ssh/id_rsa
+          echo ~/.ssh
           chmod 600 ~/.ssh/id_rsa
         
       - name: Generate Auth Hosts
