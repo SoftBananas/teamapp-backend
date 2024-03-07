@@ -38,7 +38,7 @@ jobs:
           chmod 700 ~/.ssh/
           echo "$SSH_KEY" > ~/.ssh/deploy_key.pem
           chmod 600 ~/.ssh/deploy_key.pem
-          ssh-keyscan -H ${{ env.SERVER_HOST }} >> ~/.ssh/known_host
+          ssh-keyscan -H ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} >> ~/.ssh/known_host
           chmod 600 ~/.ssh/known_host
           ssh -i ~/.ssh/deploy_key.pem -o StrictHostKeyChecking=no ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "mkdir -p ${{ env.SERVER_PATH }}"
         
