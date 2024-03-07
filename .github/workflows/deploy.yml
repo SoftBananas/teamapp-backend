@@ -43,6 +43,7 @@ jobs:
           cd ${{ env.SERVER_PATH }} && docker-compose down || \ 
           mkdir ${{ env.SERVER_PATH }} && cd ${{ env.SERVER_PATH }} && git clone https://github.com/SoftBananas/teamapp-backend.git;
           git pull;
+          cd teamapp-backend;
           docker-compose up -d; \
           exit'"
           
