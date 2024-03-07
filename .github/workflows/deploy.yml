@@ -39,7 +39,7 @@ jobs:
         run: |
           mkdir -p ~/.ssh/
           echo "$env.SSH_PRIVATE_KEY" > {{ $env.SSH_PATH }}/private.key
-          sudo chmod 600 ../private.key
+          sudo chmod 600 {{ $env.SSH_PATH }}/private.key
           echo "$env.SSH_KNOWN_HOSTS" > ${{ env.SSH_PATH }}/known_hosts
         shell: bash
         
