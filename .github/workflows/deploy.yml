@@ -34,11 +34,11 @@ jobs:
         
       - name: Deploy to Server
         run: |
-          sudo apt-get install -y ssh rsync
-          echo "$SSH_KEY" > deploy_key.pem
+          mkdir ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/deploy_key.pem
           chmod 600 deploy_key.pem
           ssh-keyscan -H ${{ env.SERVER_HOST }} >> ~/.ssh/known_hosts
-          ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "mkdir -p ${{ env.SERVER_PATH }}"
+          ssh -i ~/.ssh/deploy_key.pem -o StrictHostKeyChecking=no ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "mkdir -p ${{ env.SERVER_PATH }}"
         
         env: 
           SSH_KEY: ${{ secrets.SSH_KEY }}
