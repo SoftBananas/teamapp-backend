@@ -8,7 +8,7 @@ env:
   SERVER_HOST: 109.172.81.237
   SERVER_PORT: 22
   SERVER_USER: root
-  SERVER_PATh: /home/teamapp
+  SERVER_PATH: /home/teamapp
 
 jobs:
 
