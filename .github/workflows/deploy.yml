@@ -9,6 +9,9 @@ env:
   SERVER_PORT: 22
   SERVER_USER: root
   SERVER_PATH: /home/teamapp
+  SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
+  SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
+  SSH_KEY_PATH: ${{ github.workspace }}/../private.key
   
 jobs:
 
@@ -35,16 +38,12 @@ jobs:
       - name: Create SSH key
         run: |
           mkdir -p ~/.ssh/
-          echo "$SSH_PRIVATE_KEY" > ../private.key
+          echo "$env.SSH_PRIVATE_KEY" > ../private.key
           sudo chmod 600 ../private.key
-          echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          echo "$env.SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
         shell: bash
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
-          SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
-          SSH_KEY_PATH: ${{ github.workspace }}/../private.key
-          
+        
       - name: SSH Connection
         run: |
-          ssh -i $SSH_KEY_PATH ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}
+          ssh -i $env.SSH_KEY_PATH ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}
           echo "Connected"
