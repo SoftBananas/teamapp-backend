@@ -38,7 +38,7 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > ../private.key
           sudo chmod 600 ../private.key
           echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
-          ssh -i ${{ env.SSH_PATH }}/private.key ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}
+          ssh -i ../private.key ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}
           echo "Connected"
         shell: bash
         env:
