@@ -42,7 +42,7 @@ jobs:
         run: ssh-keyscan -H ${{ env.SERVER_HOST }} >> ~/.ssh/known_hosts
         
       - name: Install rsync
-        run: apt install rsync
+        run: apt install rsync -y
         
       - name: Deploy to Server
         run: rsync --archive --compress --progress . ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}:${{ env.SERVER_PATH }}
