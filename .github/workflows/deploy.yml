@@ -44,7 +44,7 @@ jobs:
           mkdir ${{ env.SERVER_PATH }} && cd ${{ env.SERVER_PATH }} && 
           git clone https://github.com/SoftBananas/teamapp-backend.git && 
           cd teamapp-backend &&
-          echo ${{ secrets.ENV }} >> .env.prod;
+          echo "$ENV" > .env.prod;
           git pull;
           cd teamapp-backend;
           docker-compose up -d; \
@@ -52,6 +52,7 @@ jobs:
           
         shell: bash
         env:
+          ENV: ${{ secrets.ENV }}
           SSH_PRIVATE_KEY: ${{secrets.SSH_KEY}}
           SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
           SSH_KEY_PATH: ${{ github.workspace }}/../private.key
