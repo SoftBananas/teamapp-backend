@@ -38,9 +38,7 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > ../private.key
           sudo chmod 600 ../private.key
           echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
-          ssh-agent -s
-          ssh-add ../private.key
-          ssh -tt -i ../private.key ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}
+          ssh -o StrictHostKeyChecking=no -tt -i ../private.key ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}
           echo "Connected"
         shell: bash
         env:
