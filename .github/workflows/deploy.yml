@@ -39,7 +39,9 @@ jobs:
           sudo chmod 600 ../private.key
           echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
           echo "${{ secrets.SSH_PASSPHRASE }}" | ssh-agent bash -c "ssh-add ../private.key; ssh -o StrictHostKeyChecking=no -tt ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}"
-          echo "Connected"
+          cd ${{ SERVER_PATH }} && docker-compose down || mkdir ${{ SERVER_PATH }} && cd ${{ SERVER_PATH }} && git clone https://github.com/SoftBananas/teamapp-backend.git
+          git pull
+          docker-compose up -d
         shell: bash
         env:
           SSH_PRIVATE_KEY: ${{secrets.SSH_KEY}}
