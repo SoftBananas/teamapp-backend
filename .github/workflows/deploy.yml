@@ -35,8 +35,8 @@ jobs:
       - name: Deploy to Server
         run: |
           mkdir ~/.ssh
+          chmod 700 ~/.ssh/
           echo "$SSH_KEY" > ~/.ssh/deploy_key.pem
-          chmod 600 deploy_key.pem
           ssh-keyscan -H ${{ env.SERVER_HOST }} >> ~/.ssh/known_hosts
           ssh -i ~/.ssh/deploy_key.pem -o StrictHostKeyChecking=no ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "mkdir -p ${{ env.SERVER_PATH }}"
         
