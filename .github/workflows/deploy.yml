@@ -48,7 +48,7 @@ jobs:
               echo \"$ENV\" > .env.prod && \
               docker-compose down && \
               git pull && \
-              docker-compose up -d); \
+              docker-compose up -d; \
             exit'"
           
         shell: bash
