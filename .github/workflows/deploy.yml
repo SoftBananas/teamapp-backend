@@ -8,7 +8,7 @@ env:
   SERVER_HOST: ${{ secrets.SERVER_HOST }}
   SERVER_PORT: ${{ secrets.SERVER_PORT }}
   SERVER_USER: ${{ secrets.SERVER_USERNAME }}
-  SERVER_PATH: /home/
+  SERVER_PATH: /home
   
 jobs:
 
