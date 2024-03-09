@@ -20,6 +20,6 @@ services:
       - .env.prod
     command: ["/teamapp/docker/start_app.sh"]
     ports:
-      - "19888:8000"
+      - "19088:8000"
     depends_on:
       - db
