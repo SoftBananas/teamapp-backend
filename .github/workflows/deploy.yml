@@ -5,10 +5,10 @@ on:
     branches: [ main-banana ]
 
 env:
-  SERVER_HOST: 109.172.81.237
-  SERVER_PORT: 22
-  SERVER_USER: root
-  SERVER_PATH: /home/teamapp
+  SERVER_HOST: ${{ secrets.SERVER_HOST }}
+  SERVER_PORT: ${{ secrets.SERVER_PORT }}
+  SERVER_USER: ${{ secrets.SERVER_USERNAME }}
+  SERVER_PATH: /home/
   
 jobs:
 
@@ -40,11 +40,11 @@ jobs:
           echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
           echo "${{ secrets.SSH_PASSPHRASE }}" | ssh-agent bash -c "\
             ssh-add ../private.key && \
-            ssh -o StrictHostKeyChecking=no -tt ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} '\
-              { mkdir -p ${{ env.SERVER_PATH }} && \
+            ssh -o StrictHostKeyChecking=no -tt ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} -p ${{ env.SERVER_PORT }} '\
+              { cd ${{ env.SERVER_PATH }}/teamapp-backend || \
               cd ${{ env.SERVER_PATH }} && \
-              git clone https://github.com/SoftBananas/teamapp-backend.git; } || : ; \       
-              cd ${{ env.SERVER_PATH }}/teamapp-backend && 
+              git clone https://github.com/SoftBananas/teamapp-backend.git; } && \
+              cd teamapp-backend; \
               echo \"$ENV\" > .env.prod && \
               docker-compose down && \
               git pull && \
